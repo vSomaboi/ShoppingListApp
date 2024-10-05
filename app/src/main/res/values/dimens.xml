@@ -1,3 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <dimen name="margin_s">6dp</dimen>
+    <dimen name="margin_m">12dp</dimen>
+    <dimen name="margin_l">18dp</dimen>
+    <dimen name="margin_xl">24dp</dimen>
+
+    <dimen name="padding_s">4dp</dimen>
+    <dimen name="padding_m">8dp</dimen>
+    <dimen name="padding_l">12dp</dimen>
+    <dimen name="padding_xl">16dp</dimen>
+
+    <dimen name="shadow_elevation_normal">15dp</dimen>
+    <dimen name="shadow_elevation_large">25dp</dimen>
+
+    <dimen name="border_thin">2dp</dimen>
+    <dimen name="border_normal">3dp</dimen>
+    <dimen name="border_thick">4dp</dimen>
 </resources>

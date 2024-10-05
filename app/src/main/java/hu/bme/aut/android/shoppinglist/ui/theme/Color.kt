@@ -2,10 +2,31 @@ package hu.bme.aut.android.shoppinglist.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+//LightColors
+val Burgundy = Color(0xFF74121D)
+val DarkTangerine = Color(0xFFFA9C1B)
+val Lime = Color(0xFFCAFE48)
+val Platinum = Color(0xFFE1DEE3)
+val Mindaro = Color(0xFFDBFE87)
+
+//LightLetterColors
+val HunterGreen = Color(0xFF355E3B)
+val DarkCyan = Color(0xFF008B8B)
+val Purple = Color(0xFF3501A7)
+val DarkGray = Color(0xFF1E211C)
+val LightPurple = Color(0xFF9D86F9)
+
+//DarkColors
+val RussianViolet = Color(0xFF231942)
+val UltraViolet = Color(0xFF5E548E)
+val AfricanViolet = Color(0xFF9F86C0)
+val PinkLavender = Color(0xFFE0B1CB)
+val Lilac = Color(0xFFBE95C4)
+
+//DarkLetterColors
+val ArmyGreen = Color(0xFF324D17)
+val Gold = Color(0xFFFFD700)
+val SoftGray = Color(0xFFD2D2CF)
+val Tangerine = Color(0xFFFF9966)
+val CoolWhite = Color(0xFFF4FDFF)

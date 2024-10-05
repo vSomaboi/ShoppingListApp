@@ -1,3 +1,15 @@
 <resources>
+    <!--General-->
     <string name="app_name">ShoppingList</string>
+    <string name="loading_text">Loading..</string>
+    <string name="error_text">An unknown error occurred</string>
+    <!--Input errors-->
+    <string name="too_long_email">The length of the email cannot exceed 35 characters!</string>
+    <string name="too_long_password">The length of the password cannot exceed 25 characters!</string>
+    <!--Authentication-->
+    <string name="email_supporting_text">Email address</string>
+    <string name="password_supporting_text">Password</string>
+    <string name="confirm_password_supporting_text">Confirm password</string>
+    <string name="login_button_text">Login</string>
+    <string name="register_button_text">Register</string>
 </resources>

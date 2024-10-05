@@ -16,32 +16,38 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = RussianViolet,
+    secondary = UltraViolet,
+    tertiary = AfricanViolet,
+    background = PinkLavender,
+    surface = Lilac,
+
+    onPrimary = ArmyGreen,
+    onSecondary = Gold,
+    onTertiary = SoftGray,
+    onBackground = Tangerine,
+    onSurface = CoolWhite
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Burgundy,
+    secondary = DarkTangerine,
+    tertiary = Lime,
+    background = Platinum,
+    surface = Mindaro,
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onPrimary = HunterGreen,
+    onSecondary = DarkCyan,
+    onTertiary = Purple,
+    onBackground = DarkGray,
+    onSurface = LightPurple
 )
 
 @Composable
 fun ShoppingListTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
