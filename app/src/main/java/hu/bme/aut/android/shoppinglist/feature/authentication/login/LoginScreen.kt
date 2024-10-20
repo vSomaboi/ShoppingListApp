@@ -206,7 +206,7 @@ fun LoginScreen(
                             ),
                             leadingIcon = {
                                 Icon(
-                                    painter = painterResource(id = R.drawable.ic_password),
+                                    painter = painterResource(id = R.drawable.ic_password_leading),
                                     contentDescription = null,
                                     modifier = Modifier
                                         .wrapContentSize(

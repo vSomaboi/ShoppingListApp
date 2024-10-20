@@ -16,4 +16,6 @@
     <dimen name="border_thin">2dp</dimen>
     <dimen name="border_normal">3dp</dimen>
     <dimen name="border_thick">4dp</dimen>
+
+    <dimen name="corner_rounding">10dp</dimen>
 </resources>
