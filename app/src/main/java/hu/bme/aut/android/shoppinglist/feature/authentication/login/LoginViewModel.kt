@@ -6,6 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.bme.aut.android.shoppinglist.R
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
+import hu.bme.aut.android.shoppinglist.util.emailMaxLength
+import hu.bme.aut.android.shoppinglist.util.passwordMaxLength
+import hu.bme.aut.android.shoppinglist.util.passwordMinLength
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,8 +36,8 @@ class LoginViewModel @Inject constructor(
     fun onEvent(event: LoginEvent){
         when(event){
             is LoginEvent.EmailChanged -> {
-                val newValue = event.text
-                if(newValue.length <= 35){
+                val newValue = event.input
+                if(newValue.length <= emailMaxLength){
                     _state.update {
                         it.copy(email = newValue)
                     }
@@ -46,10 +49,15 @@ class LoginViewModel @Inject constructor(
                 }
             }
             is LoginEvent.PasswordChanged -> {
-                val newValue = event.text
-                if(newValue.length <= 25){
+                val newValue = event.input
+                if(newValue.length <= passwordMaxLength){
                     _state.update {
                         it.copy(password = newValue)
+                    }
+                }
+                else if(newValue.trim().length < passwordMinLength){
+                    viewModelScope.launch {
+                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_short_password)))
                     }
                 }
                 else{
@@ -80,8 +88,8 @@ data class LoginState(
 )
 
 sealed class LoginEvent{
-    data class EmailChanged(val text: String): LoginEvent()
-    data class PasswordChanged(val text: String): LoginEvent()
+    data class EmailChanged(val input: String): LoginEvent()
+    data class PasswordChanged(val input: String): LoginEvent()
     data object PasswordVisibilityChanged: LoginEvent()
     data object LoginClicked: LoginEvent()
 }

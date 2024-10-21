@@ -13,6 +13,7 @@
     <dimen name="shadow_elevation_normal">15dp</dimen>
     <dimen name="shadow_elevation_large">25dp</dimen>
 
+    <dimen name="border_extra_thin">1dp</dimen>
     <dimen name="border_thin">2dp</dimen>
     <dimen name="border_normal">3dp</dimen>
     <dimen name="border_thick">4dp</dimen>

@@ -6,6 +6,8 @@
     <!--Input errors-->
     <string name="too_long_email">The length of the email cannot exceed 35 characters!</string>
     <string name="too_long_password">The length of the password cannot exceed 25 characters!</string>
+    <string name="too_short_password">The length of the password has to reach 7 characters excluding whitespaces!</string>
+    <string name="too_long_list_name">The length of the list name cannot exceed 35 characters!</string>
     <!--Authentication-->
     <string name="email_supporting_text">Email address</string>
     <string name="password_supporting_text">Password</string>
@@ -19,4 +21,8 @@
     <string name="add_button_content_description">Add new list</string>
     <string name="notifications_button_content_description">View notifications</string>
     <string name="new_contact_button_content_description">Add new contact</string>
+    <!--CreateScreen-->
+    <string name="list_name_supporting_text">List name</string>
+    <string name="text_above_list">Items on the list:</string>
+    <string name="add_item_content_description">Add new item</string>
 </resources>

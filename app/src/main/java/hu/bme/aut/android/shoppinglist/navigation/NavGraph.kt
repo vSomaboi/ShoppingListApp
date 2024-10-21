@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hu.bme.aut.android.shoppinglist.feature.authentication.login.LoginScreen
 import hu.bme.aut.android.shoppinglist.feature.authentication.register.RegisterScreen
+import hu.bme.aut.android.shoppinglist.feature.createshoppinglist.CreateShoppingListScreen
+import hu.bme.aut.android.shoppinglist.feature.main.MainScreen
 
 @Composable
 fun NavGraph(
@@ -38,6 +40,12 @@ fun NavGraph(
                     )
                 }
             )
+        }
+        composable(Screen.Main.route) {
+            MainScreen()
+        }
+        composable(Screen.CreateList.route){
+            CreateShoppingListScreen()
         }
     }
 }
