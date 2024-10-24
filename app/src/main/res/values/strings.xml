@@ -25,4 +25,6 @@
     <string name="list_name_supporting_text">List name</string>
     <string name="text_above_list">Items on the list:</string>
     <string name="add_item_content_description">Add new item</string>
+    <!--ProductSelectionDialog-->
+    <string name="searchbar_label">Search for products here</string>
 </resources>

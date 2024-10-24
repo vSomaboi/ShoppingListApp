@@ -7,6 +7,7 @@ import hu.bme.aut.android.shoppinglist.R
 import hu.bme.aut.android.shoppinglist.domain.model.Product
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
+import hu.bme.aut.android.shoppinglist.util.SelectionDialogUser
 import hu.bme.aut.android.shoppinglist.util.listNameMaxLength
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateShoppingListViewModel @Inject constructor(
 
-) : ViewModel() {
+) : ViewModel(), SelectionDialogUser {
     private val _state = MutableStateFlow(CreateShoppingListState())
     val state : StateFlow<CreateShoppingListState> = _state
 
@@ -59,11 +60,38 @@ class CreateShoppingListViewModel @Inject constructor(
             }
         }
     }
+
+    override fun getItemList(): List<Product> {
+        return _state.value.dialogItems
+    }
+
+    override fun processSelectionResult(selectedItem: Product) {
+        _state.update {
+            it.apply {
+                items.add(selectedItem)
+            }
+        }
+    }
+
+    override fun getSearchBarInput(): String {
+        return _state.value.dialogSearchBarInput
+    }
+
+    override fun updateSearchBar(input: String) {
+        _state.update {
+            it.copy(
+                dialogSearchBarInput = input
+            )
+        }
+        //TODO a listában is változzanak az elemek
+    }
 }
 
 data class CreateShoppingListState(
     val listName: String = "",
-    val items: List<Product> = emptyList(),
+    val items: MutableList<Product> = mutableListOf(),
+    val dialogSearchBarInput: String = "",
+    val dialogItems: List<Product> = emptyList(),
     val isLoading: Boolean = true,
     val error: Throwable? = null
 )

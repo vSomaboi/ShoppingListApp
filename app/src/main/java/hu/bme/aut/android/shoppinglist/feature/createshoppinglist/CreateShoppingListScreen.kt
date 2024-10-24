@@ -113,7 +113,10 @@ fun CreateShoppingListScreen(
                         onValueChange = { viewModel.onEvent(CreateShoppingListEvent.NameChanged(it))},
                         singleLine = true,
                         label = {
-                                Text(text = stringResource(id = R.string.list_name_supporting_text))
+                                Text(
+                                    text = stringResource(id = R.string.list_name_supporting_text),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
                         },
                         colors = OutlinedTextFieldDefaults.colors(
                             unfocusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -121,7 +124,9 @@ fun CreateShoppingListScreen(
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedTextColor = MaterialTheme.colorScheme.onTertiary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
-                            focusedBorderColor = MaterialTheme.colorScheme.onTertiary
+                            focusedBorderColor = MaterialTheme.colorScheme.onTertiary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.onSurface,
+                            focusedLabelColor = MaterialTheme.colorScheme.onTertiary
                         )
                     )
 
