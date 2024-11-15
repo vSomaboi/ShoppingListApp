@@ -5,11 +5,13 @@
     <dimen name="margin_l">18dp</dimen>
     <dimen name="margin_xl">24dp</dimen>
 
+    <dimen name="padding_xs">2dp</dimen>
     <dimen name="padding_s">4dp</dimen>
     <dimen name="padding_m">8dp</dimen>
     <dimen name="padding_l">12dp</dimen>
     <dimen name="padding_xl">16dp</dimen>
 
+    <dimen name="shadow_elevation_small">5dp</dimen>
     <dimen name="shadow_elevation_normal">15dp</dimen>
     <dimen name="shadow_elevation_large">25dp</dimen>
 

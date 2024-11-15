@@ -9,4 +9,6 @@ class ProductUseCases(
     val updateProduct = UpdateProductUseCase(productService)
     val deleteProduct = DeleteProductUseCase(productService)
     val getProductsWithNames = GetProductsWithNamesUseCase(productService)
+    val getProductsNamedAsUseCase = GetProductsNamedAsUseCase(productService)
+    val providePriceInfoUseCase = ProvidePriceInfoUseCase(productService)
 }

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.bme.aut.android.shoppinglist.R
+import hu.bme.aut.android.shoppinglist.domain.usecases.auth.AuthUseCases
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 import kotlinx.coroutines.channels.Channel
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-
+    private val authOperations: AuthUseCases
 ) : ViewModel() {
     private val _state = MutableStateFlow(RegisterState())
     val state : StateFlow<RegisterState> = _state
@@ -62,7 +63,7 @@ class RegisterViewModel @Inject constructor(
                 val newValue = event.text
                 if(newValue.length <= 25){
                     _state.update {
-                        it.copy(password = newValue)
+                        it.copy(confirmPassword = newValue)
                     }
                 }
                 else{
@@ -82,7 +83,38 @@ class RegisterViewModel @Inject constructor(
                 }
             }
             is RegisterEvent.RegisterClicked -> {
-
+                _state.update {
+                    it.copy(
+                        isLoading = true
+                    )
+                }
+                viewModelScope.launch {
+                    try{
+                        if(state.value.email.isBlank()){
+                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.empty_email_field)))
+                        }
+                        else if(state.value.password.isBlank()){
+                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.empty_password_field)))
+                        }
+                        else if(state.value.confirmPassword != state.value.password){
+                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.password_does_not_match_confirm_password)))
+                        }
+                        else{
+                            authOperations.registerUser(
+                                state.value.email,
+                                state.value.password
+                            )
+                            _uiEvent.send(UiEvent.Success)
+                        }
+                    }catch (e: Exception){
+                        _uiEvent.send(UiEvent.Failure(UiText.DynamicString(e.message ?: "Unknown error")))
+                    }
+                    _state.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                }
             }
         }
     }
@@ -94,7 +126,7 @@ data class RegisterState(
     val confirmPassword: String = "",
     val isPasswordVisible: Boolean = false,
     val isConfirmPasswordVisible: Boolean = false,
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val error: Throwable? = null
 )
 

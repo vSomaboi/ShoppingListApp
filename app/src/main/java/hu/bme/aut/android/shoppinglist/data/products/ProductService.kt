@@ -9,5 +9,11 @@ interface ProductService {
 
     suspend fun deleteProduct(id: String)
 
+    suspend fun getAllProducts() : List<Product>
+
+    suspend fun getProductsNamedAs(name: String) : List<Product>
+
     suspend fun getProductsWithNames(names: List<String>) : List<Product>
+
+    suspend fun providePriceInfo(product: Product, priceInfo: Pair<String, Int>)
 }

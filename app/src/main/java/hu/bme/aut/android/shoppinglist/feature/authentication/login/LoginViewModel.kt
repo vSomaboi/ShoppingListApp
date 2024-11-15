@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.bme.aut.android.shoppinglist.R
+import hu.bme.aut.android.shoppinglist.domain.usecases.auth.AuthUseCases
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 import hu.bme.aut.android.shoppinglist.util.emailMaxLength
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-
+    private val authOperations: AuthUseCases
 ) : ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state : StateFlow<LoginState> = _state
@@ -72,7 +73,35 @@ class LoginViewModel @Inject constructor(
                 }
             }
             is LoginEvent.LoginClicked -> {
-
+                _state.update {
+                    it.copy(
+                        isLoading = true
+                    )
+                }
+                viewModelScope.launch {
+                    try{
+                        if(state.value.email.isBlank()){
+                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.empty_email_field)))
+                        }
+                        else if(state.value.password.isBlank()){
+                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.empty_password_field)))
+                        }
+                        else{
+                            authOperations.authenticateUser(
+                                state.value.email,
+                                state.value.password
+                            )
+                            _uiEvent.send(UiEvent.Success)
+                        }
+                    }catch (e: Exception){
+                        _uiEvent.send(UiEvent.Failure(UiText.DynamicString(e.message ?: "Unknown error")))
+                    }
+                    _state.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                }
             }
         }
     }
@@ -83,7 +112,7 @@ data class LoginState(
     val email: String = "",
     val password: String = "",
     val isPasswordVisible: Boolean = false,
-    val isLoading: Boolean = true,
+    val isLoading: Boolean = false,
     val error: Throwable? = null
 )
 

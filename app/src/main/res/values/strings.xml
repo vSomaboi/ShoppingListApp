@@ -14,17 +14,29 @@
     <string name="confirm_password_supporting_text">Confirm password</string>
     <string name="login_button_text">Login</string>
     <string name="register_button_text">Register</string>
+    <string name="empty_email_field">Email field must not be empty!</string>
+    <string name="empty_password_field">Password field must not be empty!</string>
+    <string name="password_does_not_match_confirm_password">Password has to match confirm password!</string>
     <!--Main Screen-->
     <string name="own_lists_text">Your shopping lists:</string>
     <string name="shared_lists_text">Lists shared with you:</string>
     <string name="edit_button_content_description">Edit shopping list</string>
-    <string name="add_button_content_description">Add new list</string>
+    <string name="create_new_list_button_text">Create new list</string>
     <string name="notifications_button_content_description">View notifications</string>
     <string name="new_contact_button_content_description">Add new contact</string>
     <!--CreateScreen-->
     <string name="list_name_supporting_text">List name</string>
     <string name="text_above_list">Items on the list:</string>
     <string name="add_item_content_description">Add new item</string>
+    <string name="create_button_text">Create list</string>
     <!--ProductSelectionDialog-->
     <string name="searchbar_label">Search for products here</string>
+    <string name="lidl_price_label">Lidl:</string>
+    <string name="tesco_price_label">Tesco:</string>
+    <string name="spar_price_label">Spar:</string>
+    <string name="price_unit_huf">Ft</string>
+    <string name="unexpected_error_message">An unexpected error occurred, please try refreshing the list of products, then retry the operation.</string>
+    <string name="add_button_text">Add to list</string>
+    <string name="invalid_selected_amount_error">You cannot add less than or equal to zero amount of an item to your list.</string>
+    <string name="cancel_dialog">Cancel</string>
 </resources>

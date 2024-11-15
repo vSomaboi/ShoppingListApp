@@ -1,29 +1,31 @@
-package hu.bme.aut.android.shoppinglist.data.products.firebase
+package hu.bme.aut.android.shoppinglist.ui.model
 
-import com.google.firebase.firestore.DocumentId
 import hu.bme.aut.android.shoppinglist.domain.model.PriceAtTimePoint
 import hu.bme.aut.android.shoppinglist.domain.model.Product
 
-data class FirebaseProduct(
-    @DocumentId val id: String = "",
+data class ProductUi(
+    val id: String = "",
     val name: String = "",
     val lidlPrices: List<PriceAtTimePoint> = emptyList(),
     val tescoPrices : List<PriceAtTimePoint> = emptyList(),
     val sparPrices : List<PriceAtTimePoint> = emptyList(),
+    var selectedAmount: Float = 0f
 )
 
-fun FirebaseProduct.asProduct(): Product = Product(
-    id = id,
+fun ProductUi.asProduct(): Product = Product(
+    id= id,
     name = name,
     lidlPrices = lidlPrices,
     tescoPrices = tescoPrices,
-    sparPrices = sparPrices
+    sparPrices = sparPrices,
+    selectedAmount = selectedAmount
 )
 
-fun Product.asFirebaseProduct() : FirebaseProduct = FirebaseProduct(
-    id = id,
+fun Product.asProductUi(): ProductUi = ProductUi(
+    id= id,
     name = name,
     lidlPrices = lidlPrices,
     tescoPrices = tescoPrices,
-    sparPrices = sparPrices
+    sparPrices = sparPrices,
+    selectedAmount = selectedAmount
 )

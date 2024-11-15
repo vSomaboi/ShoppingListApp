@@ -42,7 +42,13 @@ fun NavGraph(
             )
         }
         composable(Screen.Main.route) {
-            MainScreen()
+            MainScreen(
+                createButtonClicked = {
+                    navController.navigate(
+                        route = Screen.CreateList.route
+                    )
+                }
+            )
         }
         composable(Screen.CreateList.route){
             CreateShoppingListScreen()

@@ -30,7 +30,17 @@ class MainViewModel @Inject constructor(
     }
 
     fun onEvent(event: MainEvent){
+        when(event){
+            is MainEvent.ListClicked -> {
 
+            }
+            is MainEvent.ModifyOwnClicked -> {
+
+            }
+            is MainEvent.ModifySharedClicked -> {
+
+            }
+        }
     }
 }
 
@@ -58,7 +68,4 @@ sealed class MainEvent{
     data class ListClicked(val list: ShoppingList): MainEvent()
     data class ModifyOwnClicked(val list: ShoppingList): MainEvent()
     data class ModifySharedClicked(val list: ShoppingList): MainEvent()
-    data object AddButtonClicked: MainEvent()
-    data object NotificationsButtonClicked: MainEvent()
-    data object NewContactButtonClicked: MainEvent()
 }

@@ -5,9 +5,13 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.bme.aut.android.shoppinglist.R
 import hu.bme.aut.android.shoppinglist.domain.model.Product
+import hu.bme.aut.android.shoppinglist.domain.usecases.products.ProductUseCases
+import hu.bme.aut.android.shoppinglist.ui.model.ProductUi
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
+import hu.bme.aut.android.shoppinglist.ui.model.asProduct
+import hu.bme.aut.android.shoppinglist.ui.model.asProductUi
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
-import hu.bme.aut.android.shoppinglist.util.SelectionDialogUser
+import hu.bme.aut.android.shoppinglist.util.ISelectionDialogUser
 import hu.bme.aut.android.shoppinglist.util.listNameMaxLength
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,8 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateShoppingListViewModel @Inject constructor(
-
-) : ViewModel(), SelectionDialogUser {
+    private val productOperations: ProductUseCases
+) : ViewModel(), ISelectionDialogUser {
     private val _state = MutableStateFlow(CreateShoppingListState())
     val state : StateFlow<CreateShoppingListState> = _state
 
@@ -53,24 +57,82 @@ class CreateShoppingListViewModel @Inject constructor(
                 }
             }
             is CreateShoppingListEvent.DeleteListItem -> {
+                val deletedItem = event.item
+                _state.update {
+                    it.apply {
+                        items.remove(deletedItem)
+                    }
+                }
 
             }
             is CreateShoppingListEvent.AddButtonClicked -> {
+                _state.update {
+                    it.copy(
+                        isDialogOpened = true
+                    )
+                }
+            }
+            is CreateShoppingListEvent.CreateButtonClicked -> {
 
+            }
+            is CreateShoppingListEvent.DialogDismissed -> {
+                _state.update {
+                    it.copy(
+                        isDialogOpened = false
+                    )
+                }
             }
         }
     }
 
-    override fun getItemList(): List<Product> {
+    override fun getItemList(): List<ProductUi> {
         return _state.value.dialogItems
     }
 
-    override fun processSelectionResult(selectedItem: Product) {
+    override fun changeSelectedAmount(item: ProductUi, diff: Int) {
         _state.update {
             it.apply {
-                items.add(selectedItem)
+                val selectedIdx = dialogItems.indexOf(item)
+                try{
+                    dialogItems[selectedIdx].selectedAmount += diff
+                }catch (e: IndexOutOfBoundsException){
+                    viewModelScope.launch {
+                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.unexpected_error_message)))
+                    }
+                }
             }
         }
+    }
+
+    override fun setSelectedAmount(item: ProductUi, newAmount: Float) {
+        _state.update {
+            it.apply {
+                val selectedIdx = dialogItems.indexOf(item)
+                try{
+                    dialogItems[selectedIdx].selectedAmount = newAmount
+                }catch (e: IndexOutOfBoundsException){
+                    viewModelScope.launch {
+                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.unexpected_error_message)))
+                    }
+                }
+            }
+        }
+    }
+
+    override fun processSelectionResult(selectedItem: ProductUi) {
+        if(selectedItem.selectedAmount > 0f){
+            _state.update {
+                it.apply {
+                    items.add(selectedItem.asProduct())
+                    isDialogOpened = false
+                }
+            }
+        }else{
+            viewModelScope.launch {
+                _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.invalid_selected_amount_error)))
+            }
+        }
+
     }
 
     override fun getSearchBarInput(): String {
@@ -83,15 +145,30 @@ class CreateShoppingListViewModel @Inject constructor(
                 dialogSearchBarInput = input
             )
         }
-        //TODO a listában is változzanak az elemek
+        if(state.value.dialogSearchBarInput.trim().length >= 3){
+            viewModelScope.launch {
+                try{
+                    _state.update {
+                        it.copy(
+                            dialogItems = productOperations.getProductsNamedAsUseCase
+                                .invoke(state.value.dialogSearchBarInput.trim())
+                                .getOrThrow().map { product ->  product.asProductUi() }
+                        )
+                    }
+                }catch (e: Exception){
+                    _uiEvent.send(UiEvent.Failure(UiText.DynamicString(e.message ?: "Unknown error")))
+                }
+            }
+        }
     }
 }
 
 data class CreateShoppingListState(
     val listName: String = "",
     val items: MutableList<Product> = mutableListOf(),
+    var isDialogOpened: Boolean = false,
     val dialogSearchBarInput: String = "",
-    val dialogItems: List<Product> = emptyList(),
+    val dialogItems: List<ProductUi> = listOf(),
     val isLoading: Boolean = true,
     val error: Throwable? = null
 )
@@ -102,4 +179,7 @@ sealed class CreateShoppingListEvent{
     data object AddButtonClicked : CreateShoppingListEvent()
 
     data class DeleteListItem(val item: Product): CreateShoppingListEvent()
+    data object CreateButtonClicked: CreateShoppingListEvent()
+
+    data object DialogDismissed: CreateShoppingListEvent()
 }

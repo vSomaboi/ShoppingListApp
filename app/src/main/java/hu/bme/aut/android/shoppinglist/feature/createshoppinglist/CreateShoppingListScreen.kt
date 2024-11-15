@@ -1,10 +1,13 @@
 package hu.bme.aut.android.shoppinglist.feature.createshoppinglist
 
+import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,10 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -41,6 +48,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hu.bme.aut.android.shoppinglist.R
+import hu.bme.aut.android.shoppinglist.ui.common.ProductSelectionDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ShoppingListLoadingScreen
 import hu.bme.aut.android.shoppinglist.ui.theme.ShoppingListTheme
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
@@ -51,8 +59,6 @@ fun CreateShoppingListScreen(
     viewModel: CreateShoppingListViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val hostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -64,12 +70,17 @@ fun CreateShoppingListScreen(
 
                 }
                 is UiEvent.Failure -> {
-                    scope.launch {
-                        hostState.showSnackbar(uiEvent.message.asString(context))
-                    }
+                    Toast.makeText(context, uiEvent.message.asString(context), Toast.LENGTH_LONG).show()
                 }
             }
         }
+    }
+
+    if(state.isDialogOpened){
+        ProductSelectionDialog(
+            onDismissRequest = { viewModel.onEvent(CreateShoppingListEvent.DialogDismissed) },
+            dataProvider = viewModel
+        )
     }
 
     Scaffold(
@@ -84,7 +95,7 @@ fun CreateShoppingListScreen(
                         .fillMaxSize()
                         .background(color = MaterialTheme.colorScheme.background)
                 ) {
-                    val (tfName, rowAboveList, lItems) = createRefs()
+                    val (tfName, rowAboveList, lItems, btnCreate) = createRefs()
 
                     val glTopOfContent = createGuidelineFromTop(0.2f)
                     val glBottomOfContent = createGuidelineFromBottom(0.2f)
@@ -185,18 +196,25 @@ fun CreateShoppingListScreen(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
-                                        Text(
-                                            text = product.name,
-                                            color = MaterialTheme.colorScheme.onSurface,
-                                            style = MaterialTheme.typography.titleLarge
-                                        )
+                                        Column {
+                                            Text(
+                                                text = product.name,
+                                                color = MaterialTheme.colorScheme.onTertiary,
+                                                style = MaterialTheme.typography.titleLarge
+                                            )
+                                            Text(
+                                                text = product.selectedAmount.toString(),
+                                                color = MaterialTheme.colorScheme.onTertiary,
+                                                style = MaterialTheme.typography.bodyLarge
+                                            )
+                                        }
                                         IconButton(
                                             onClick = { viewModel.onEvent(CreateShoppingListEvent.DeleteListItem(product)) }
                                         ) {
                                             Icon(
                                                 painter = painterResource(id = R.drawable.ic_delete),
                                                 contentDescription = stringResource(id = R.string.edit_button_content_description),
-                                                tint = MaterialTheme.colorScheme.onSurface
+                                                tint = MaterialTheme.colorScheme.onTertiary
                                             )
                                         }
                                     }
@@ -204,12 +222,59 @@ fun CreateShoppingListScreen(
                                 supportingContent = {
                                     HorizontalDivider(
                                         thickness = dimensionResource(id = R.dimen.border_thin),
-                                        color = MaterialTheme.colorScheme.onSurface
+                                        color = MaterialTheme.colorScheme.onTertiary
                                     )
-                                }
+                                },
+                                colors = ListItemDefaults.colors(
+                                    containerColor = MaterialTheme.colorScheme.tertiary
+                                )
                             )
                         }
 
+                    }
+
+                    Button(
+                        modifier = Modifier
+                            .constrainAs(btnCreate){
+                                top.linkTo(
+                                    anchor = glBottomOfContent,
+                                    margin = margin
+                                )
+                                end.linkTo(glEndOfContent)
+                            },
+                        onClick = { viewModel.onEvent(CreateShoppingListEvent.CreateButtonClicked) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if(isPressed){
+                                MaterialTheme.colorScheme.primary
+                            }
+                            else{
+                                MaterialTheme.colorScheme.secondary
+                                },
+                            contentColor = if(isPressed){
+                                MaterialTheme.colorScheme.onPrimary
+                            }
+                            else{
+                                MaterialTheme.colorScheme.onSecondary
+                            }
+                        ),
+                        border = BorderStroke(
+                            width = dimensionResource(id = R.dimen.border_thin),
+                            color = if(isPressed){
+                                MaterialTheme.colorScheme.onPrimary
+                            }
+                            else{
+                                MaterialTheme.colorScheme.onSecondary
+                            }
+                        ),
+                        elevation = ButtonDefaults.buttonElevation(
+                            defaultElevation = dimensionResource(id = R.dimen.shadow_elevation_small),
+                            pressedElevation = dimensionResource(id = R.dimen.shadow_elevation_normal)
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.create_button_text),
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
 
                 }
@@ -218,6 +283,7 @@ fun CreateShoppingListScreen(
     )
 }
 
+/*
 @Composable
 @Preview
 fun CreateShoppingListPreview(){
@@ -225,4 +291,4 @@ fun CreateShoppingListPreview(){
     ShoppingListTheme {
         CreateShoppingListScreen(viewModel)
     }
-}
+}*/

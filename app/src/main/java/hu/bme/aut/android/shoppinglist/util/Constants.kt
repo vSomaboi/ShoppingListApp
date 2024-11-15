@@ -8,3 +8,5 @@ const val passwordMaxLength: Int = 25
 const val passwordMinLength: Int = 7
 
 const val listNameMaxLength: Int = 35
+
+const val iconMinSize: Int = 40

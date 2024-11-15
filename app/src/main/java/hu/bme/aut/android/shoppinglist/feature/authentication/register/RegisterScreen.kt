@@ -1,5 +1,6 @@
 package hu.bme.aut.android.shoppinglist.feature.authentication.register
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -55,8 +56,6 @@ fun RegisterScreen(
     onRegisterClick: () -> Unit = {}
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val hostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -68,9 +67,7 @@ fun RegisterScreen(
                     onRegisterClick()
                 }
                 is UiEvent.Failure -> {
-                    scope.launch {
-                        hostState.showSnackbar(uiEvent.message.asString(context))
-                    }
+                    Toast.makeText(context, uiEvent.message.asString(context), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -233,7 +230,7 @@ fun RegisterScreen(
                                 shape = OutlinedTextFieldDefaults.shape,
                                 ambientColor = MaterialTheme.colorScheme.background
                             ),
-                        value = state.password,
+                        value = state.confirmPassword,
                         onValueChange = { viewModel.onEvent(RegisterEvent.ConfirmPasswordChanged(it)) },
                         singleLine = true,
                         supportingText = {
@@ -349,6 +346,7 @@ fun RegisterScreen(
     )
 }
 
+/*
 @Composable
 @Preview
 fun RegisterPreview(){
@@ -356,4 +354,4 @@ fun RegisterPreview(){
     ShoppingListTheme {
         RegisterScreen(viewModel)
     }
-}
+}*/

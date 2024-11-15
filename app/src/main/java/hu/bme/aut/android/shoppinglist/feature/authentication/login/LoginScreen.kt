@@ -1,5 +1,6 @@
 package hu.bme.aut.android.shoppinglist.feature.authentication.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -59,8 +60,6 @@ fun LoginScreen(
     onRegisterClick: () -> Unit = {}
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val hostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -72,9 +71,7 @@ fun LoginScreen(
                     onLoginClick()
                 }
                 is UiEvent.Failure -> {
-                    scope.launch {
-                        hostState.showSnackbar(uiEvent.message.asString(context))
-                    }
+                    Toast.makeText(context, uiEvent.message.asString(context), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -350,6 +347,7 @@ fun LoginScreen(
 
 }
 
+/*
 @Composable
 @Preview
 fun LoginPreView(){
@@ -357,4 +355,4 @@ fun LoginPreView(){
     ShoppingListTheme {
         LoginScreen(viewModel)
     }
-}
+}*/
