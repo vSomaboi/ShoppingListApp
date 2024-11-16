@@ -15,7 +15,11 @@ import javax.inject.Singleton
 class FirebaseProductService @Inject constructor() : ProductService {
     private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
     override suspend fun saveProduct(product: Product) {
-        fireStore.collection(PRODUCT_COLLECTION).add(product.asFirebaseProduct()).await()
+        fireStore.collection(PRODUCT_COLLECTION).add(
+            product.asFirebaseProduct().apply {
+                name = name.trim().uppercase()
+            }
+        ).await()
     }
 
     override suspend fun updateProduct(product: Product) {
@@ -55,7 +59,7 @@ class FirebaseProductService @Inject constructor() : ProductService {
 
     override suspend fun getProductsWithNames(names: List<String>): List<Product> {
         return fireStore.collection(PRODUCT_COLLECTION)
-            .whereIn("name", names)
+            .whereIn("name", names.map { it.uppercase() })
             .get()
             .await()
             .toObjects<FirebaseProduct>()
@@ -65,10 +69,25 @@ class FirebaseProductService @Inject constructor() : ProductService {
             .toList()
     }
 
+    override suspend fun getProductWithExactName(exactName: String): Product {
+        return fireStore.collection(PRODUCT_COLLECTION)
+            .whereEqualTo("name", exactName.uppercase())
+            .get()
+            .await()
+            .toObjects<FirebaseProduct>()
+            .map {
+                it.asProduct()
+            }
+            .first()
+    }
+
     override suspend fun providePriceInfo(product: Product, priceInfo: Pair<String, Int>) {
         fireStore.collection(PRODUCT_COLLECTION).document(product.id)
             .update("${priceInfo.first.lowercase()}Prices", FieldValue.arrayUnion(
-                    PriceAtTimePoint(priceInfo.second, LocalDate.now())
+                    PriceAtTimePoint(
+                        price = priceInfo.second,
+                        dateOfProviding = LocalDate.now()
+                    )
                 )
             )
             .await()

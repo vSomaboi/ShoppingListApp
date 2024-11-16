@@ -41,6 +41,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hu.bme.aut.android.shoppinglist.R
+import hu.bme.aut.android.shoppinglist.ui.common.AddProductDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ShoppingListLoadingScreen
 import hu.bme.aut.android.shoppinglist.ui.theme.ShoppingListTheme
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
@@ -51,7 +52,6 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     newContactButtonClicked: () -> Unit = {},
     notificationsButtonClicked: () -> Unit = {},
-    addButtonClicked: () -> Unit = {},
     createButtonClicked: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -70,6 +70,13 @@ fun MainScreen(
                 }
             }
         }
+    }
+
+    if(state.isDialogOpen){
+        AddProductDialog(
+            onDismissRequest = { viewModel.onEvent(MainEvent.DialogDismissed) },
+            dataProvider = viewModel
+        )
     }
 
     Scaffold(
@@ -94,11 +101,11 @@ fun MainScreen(
                         )
                     }
                     IconButton(
-                        onClick = { addButtonClicked() }
+                        onClick = { viewModel.onEvent(MainEvent.DialogOpened) }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add),
-                            contentDescription = stringResource(id = R.string.create_new_list_button_text)
+                            contentDescription = stringResource(id = R.string.add_product_button_content_description)
                         )
                     }
                 },

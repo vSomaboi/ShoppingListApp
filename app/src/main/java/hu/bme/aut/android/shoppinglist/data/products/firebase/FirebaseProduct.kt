@@ -6,7 +6,7 @@ import hu.bme.aut.android.shoppinglist.domain.model.Product
 
 data class FirebaseProduct(
     @DocumentId val id: String = "",
-    val name: String = "",
+    var name: String = "",
     val lidlPrices: List<PriceAtTimePoint> = emptyList(),
     val tescoPrices : List<PriceAtTimePoint> = emptyList(),
     val sparPrices : List<PriceAtTimePoint> = emptyList(),

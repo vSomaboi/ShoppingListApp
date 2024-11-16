@@ -3,6 +3,10 @@
     <string name="app_name">ShoppingList</string>
     <string name="loading_text">Loading..</string>
     <string name="error_text">An unknown error occurred</string>
+    <string name="lidl_price_label">Lidl:</string>
+    <string name="tesco_price_label">Tesco:</string>
+    <string name="spar_price_label">Spar:</string>
+    <string name="price_unit_huf">Ft</string>
     <!--Input errors-->
     <string name="too_long_email">The length of the email cannot exceed 35 characters!</string>
     <string name="too_long_password">The length of the password cannot exceed 25 characters!</string>
@@ -21,8 +25,9 @@
     <string name="own_lists_text">Your shopping lists:</string>
     <string name="shared_lists_text">Lists shared with you:</string>
     <string name="edit_button_content_description">Edit shopping list</string>
-    <string name="create_new_list_button_text">Create new list</string>
+    <string name="add_product_button_content_description">Add product to database</string>
     <string name="notifications_button_content_description">View notifications</string>
+    <string name="create_new_list_button_text">Create new list</string>
     <string name="new_contact_button_content_description">Add new contact</string>
     <!--CreateScreen-->
     <string name="list_name_supporting_text">List name</string>
@@ -31,12 +36,14 @@
     <string name="create_button_text">Create list</string>
     <!--ProductSelectionDialog-->
     <string name="searchbar_label">Search for products here</string>
-    <string name="lidl_price_label">Lidl:</string>
-    <string name="tesco_price_label">Tesco:</string>
-    <string name="spar_price_label">Spar:</string>
-    <string name="price_unit_huf">Ft</string>
     <string name="unexpected_error_message">An unexpected error occurred, please try refreshing the list of products, then retry the operation.</string>
     <string name="add_button_text">Add to list</string>
     <string name="invalid_selected_amount_error">You cannot add less than or equal to zero amount of an item to your list.</string>
     <string name="cancel_dialog">Cancel</string>
+    <!--AddProductDialog-->
+    <string name="add_product_dialog_info_text">Price info (optional):</string>
+    <string name="label_name">Enter name here</string>
+    <string name="submit_button_text">Submit</string>
+    <string name="too_long_product_name">Product name cannot exceed 40 characters!</string>
+    <string name="negative_price_error">The given price info value cannot be zero or lower!</string>
 </resources>

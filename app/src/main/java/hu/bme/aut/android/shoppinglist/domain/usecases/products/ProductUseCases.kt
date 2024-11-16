@@ -11,4 +11,5 @@ class ProductUseCases(
     val getProductsWithNames = GetProductsWithNamesUseCase(productService)
     val getProductsNamedAsUseCase = GetProductsNamedAsUseCase(productService)
     val providePriceInfoUseCase = ProvidePriceInfoUseCase(productService)
+    val getProductWithExactNameUseCase = GetProductWithExactNameUseCase(productService)
 }
