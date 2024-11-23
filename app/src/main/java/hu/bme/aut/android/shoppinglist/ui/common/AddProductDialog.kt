@@ -1,11 +1,13 @@
 package hu.bme.aut.android.shoppinglist.ui.common
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -19,13 +21,11 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.Dialog
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import hu.bme.aut.android.shoppinglist.R
-import hu.bme.aut.android.shoppinglist.feature.main.MainViewModel
-import hu.bme.aut.android.shoppinglist.ui.theme.ShoppingListTheme
 import hu.bme.aut.android.shoppinglist.util.IAddProductDialogUser
 
 @Composable
@@ -90,8 +90,7 @@ fun AddProductDialog(
                     ),
                     label = {
                         Text(
-                            text = stringResource(id = R.string.label_name),
-                            style = MaterialTheme.typography.bodyLarge
+                            text = stringResource(id = R.string.label_name)
                         )
                     }
                 )
@@ -120,11 +119,12 @@ fun AddProductDialog(
                             )
                             width = Dimension.fillToConstraints
                         },
-                    value = dataProvider.getLidlPrice().toString(),
-                    onValueChange = { dataProvider.updateLidlPrice(it.toInt()) },
+                    value = dataProvider.getLidlPrice(),
+                    onValueChange = { dataProvider.updateLidlPrice(it) },
                     textStyle = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
                         focusedContainerColor = MaterialTheme.colorScheme.secondary,
@@ -166,11 +166,12 @@ fun AddProductDialog(
                             )
                             width = Dimension.fillToConstraints
                         },
-                    value = dataProvider.getTescoPrice().toString(),
-                    onValueChange = { dataProvider.updateTescoPrice(it.toInt()) },
+                    value = dataProvider.getTescoPrice(),
+                    onValueChange = { dataProvider.updateTescoPrice(it) },
                     textStyle = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
                         focusedContainerColor = MaterialTheme.colorScheme.secondary,
@@ -214,11 +215,12 @@ fun AddProductDialog(
                             )
                             width = Dimension.fillToConstraints
                         },
-                    value = dataProvider.getSparPrice().toString(),
-                    onValueChange = { dataProvider.updateSparPrice(it.toInt()) },
+                    value = dataProvider.getSparPrice(),
+                    onValueChange = { dataProvider.updateSparPrice(it) },
                     textStyle = MaterialTheme.typography.bodyLarge.copy(
                         fontWeight = FontWeight.Bold
                     ),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
                         focusedContainerColor = MaterialTheme.colorScheme.secondary,
@@ -288,12 +290,15 @@ fun AddProductDialog(
     }
 }
 
+/*
 @Composable
 @Preview
 fun AddDialogPreview(){
     ShoppingListTheme {
         AddProductDialog(
-            onDismissRequest = { /*TODO*/ },
+            onDismissRequest = { */
+/*TODO*//*
+ },
             dataProvider = MainViewModel())
     }
-}
+}*/

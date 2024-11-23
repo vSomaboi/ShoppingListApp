@@ -6,7 +6,12 @@ import hu.bme.aut.android.shoppinglist.domain.model.Product
 class SaveProductUseCase(
     private val productService: ProductService
 ) {
-    suspend operator fun invoke(product: Product){
-        productService.saveProduct(product)
+    suspend operator fun invoke(product: Product) : Result<Boolean>{
+        return try{
+            val result = productService.saveProduct(product)
+            Result.success(result)
+        }catch (e: Exception){
+            Result.failure(e)
+        }
     }
 }

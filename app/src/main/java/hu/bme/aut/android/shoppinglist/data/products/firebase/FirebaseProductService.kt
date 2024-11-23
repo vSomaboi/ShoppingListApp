@@ -1,5 +1,7 @@
 package hu.bme.aut.android.shoppinglist.data.products.firebase
 
+import android.util.Log
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObjects
@@ -7,19 +9,31 @@ import hu.bme.aut.android.shoppinglist.data.products.ProductService
 import hu.bme.aut.android.shoppinglist.domain.model.PriceAtTimePoint
 import hu.bme.aut.android.shoppinglist.domain.model.Product
 import kotlinx.coroutines.tasks.await
-import java.time.LocalDate
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FirebaseProductService @Inject constructor() : ProductService {
     private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    override suspend fun saveProduct(product: Product) {
-        fireStore.collection(PRODUCT_COLLECTION).add(
-            product.asFirebaseProduct().apply {
-                name = name.trim().uppercase()
-            }
-        ).await()
+    override suspend fun saveProduct(product: Product): Boolean {
+        val identicalNamedProducts: List<FirebaseProduct> =
+            fireStore.collection(PRODUCT_COLLECTION)
+                .whereEqualTo("name", product.name.trim().uppercase())
+                .limit(1)
+                .get()
+                .await()
+                .toObjects<FirebaseProduct>()
+        return if(identicalNamedProducts.isEmpty()){
+            fireStore.collection(PRODUCT_COLLECTION).add(
+                product.asFirebaseProduct().apply {
+                    name = name.trim().uppercase()
+                }
+            ).await()
+            true
+        }else{
+            false
+        }
     }
 
     override suspend fun updateProduct(product: Product) {
@@ -45,8 +59,8 @@ class FirebaseProductService @Inject constructor() : ProductService {
 
     override suspend fun getProductsNamedAs(name: String): List<Product> {
         return fireStore.collection(PRODUCT_COLLECTION)
-            .whereGreaterThan("name", name.lowercase())
-            .whereLessThan("name", "${name.uppercase()}~")
+            .whereGreaterThanOrEqualTo("name", name.uppercase())
+            .whereLessThanOrEqualTo("name", name.uppercase() + "Z")
             .orderBy("name")
             .get()
             .await()
@@ -86,7 +100,7 @@ class FirebaseProductService @Inject constructor() : ProductService {
             .update("${priceInfo.first.lowercase()}Prices", FieldValue.arrayUnion(
                     PriceAtTimePoint(
                         price = priceInfo.second,
-                        dateOfProviding = LocalDate.now()
+                        dateOfProviding = Timestamp(Date())
                     )
                 )
             )

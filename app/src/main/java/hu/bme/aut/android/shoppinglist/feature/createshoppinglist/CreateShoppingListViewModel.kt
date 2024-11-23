@@ -1,5 +1,7 @@
 package hu.bme.aut.android.shoppinglist.feature.createshoppinglist
 
+
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +25,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateShoppingListViewModel @Inject constructor(
-    private val productOperations: ProductUseCases
+    //private val productOperations: ProductUseCases
 ) : ViewModel(), ISelectionDialogUser {
     private val _state = MutableStateFlow(CreateShoppingListState())
     val state : StateFlow<CreateShoppingListState> = _state
@@ -52,7 +54,7 @@ class CreateShoppingListViewModel @Inject constructor(
                 }
                 else{
                     viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_long_list_name)))
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.too_long_list_name)))
                     }
                 }
             }
@@ -89,38 +91,82 @@ class CreateShoppingListViewModel @Inject constructor(
         return _state.value.dialogItems
     }
 
-    override fun changeSelectedAmount(item: ProductUi, diff: Int) {
-        _state.update {
-            it.apply {
-                val selectedIdx = dialogItems.indexOf(item)
-                try{
-                    dialogItems[selectedIdx].selectedAmount += diff
-                }catch (e: IndexOutOfBoundsException){
-                    viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.unexpected_error_message)))
-                    }
-                }
+    override fun changeSelectedAmountWholePart(item: ProductUi, diff: Int) {
+        if(item.selectedAmountWholePart+diff < 0){
+            return
+        }
+        try{
+            val idx = _state.value.dialogItems.indexOf(item)
+            val newItem = _state.value.dialogItems[idx].copy(selectedAmountWholePart = item.selectedAmountWholePart+diff)
+            _state.update {
+                it.copy(
+                    dialogItems = it.dialogItems.minus(item).plus(newItem)
+                )
+            }
+        }catch (e: IndexOutOfBoundsException){
+            viewModelScope.launch {
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.unexpected_error_message)))
             }
         }
     }
 
-    override fun setSelectedAmount(item: ProductUi, newAmount: Float) {
-        _state.update {
-            it.apply {
-                val selectedIdx = dialogItems.indexOf(item)
-                try{
-                    dialogItems[selectedIdx].selectedAmount = newAmount
-                }catch (e: IndexOutOfBoundsException){
-                    viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.unexpected_error_message)))
-                    }
+    override fun setSelectedAmountWholePart(item: ProductUi, newAmount: String) {
+        try{
+            val idx = _state.value.dialogItems.indexOf(item)
+            val newItem = _state.value.dialogItems[idx].copy(selectedAmountWholePart = newAmount.toInt())
+            _state.update {
+                it.copy(
+                    dialogItems = it.dialogItems.minus(item).plus(newItem)
+                )
+            }
+        }catch (e: IndexOutOfBoundsException){
+            viewModelScope.launch {
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.unexpected_error_message)))
+            }
+        }
+    }
+
+    override fun changeSelectedAmountFractionPart(item: ProductUi, diff: Int) {
+        if(item.selectedAmountFractionPart+diff < 0){
+            return
+        }
+        try{
+            val idx = _state.value.dialogItems.indexOf(item)
+            val newItem = _state.value.dialogItems[idx].copy(selectedAmountFractionPart = item.selectedAmountFractionPart+diff)
+            _state.update {
+                it.copy(
+                    dialogItems = it.dialogItems.minus(item).plus(newItem)
+                )
+            }
+        }catch (e: IndexOutOfBoundsException){
+            viewModelScope.launch {
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.unexpected_error_message)))
+            }
+        }
+    }
+
+    override fun setSelectedAmountFractionPart(item: ProductUi, newAmount: String) {
+        try{
+            val idx = _state.value.dialogItems.indexOf(item)
+            val newItem = _state.value.dialogItems[idx].copy(selectedAmountFractionPart = newAmount.toInt())
+            _state.update {
+                it.copy(
+                    dialogItems = it.dialogItems.minus(item).plus(newItem)
+                )
+            }
+        }catch (e: Exception){
+            viewModelScope.launch {
+                if(e.javaClass == NumberFormatException::class.java){
+                    _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.invalid_number_format_error)))
+                }else{
+                    _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.unexpected_error_message)))
                 }
             }
         }
     }
 
     override fun processSelectionResult(selectedItem: ProductUi) {
-        if(selectedItem.selectedAmount > 0f){
+        if(selectedItem.selectedAmountWholePart > 0 || selectedItem.selectedAmountFractionPart > 0){
             _state.update {
                 it.apply {
                     items.add(selectedItem.asProduct())
@@ -129,7 +175,7 @@ class CreateShoppingListViewModel @Inject constructor(
             }
         }else{
             viewModelScope.launch {
-                _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.invalid_selected_amount_error)))
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.invalid_selected_amount_error)))
             }
         }
 
@@ -145,21 +191,22 @@ class CreateShoppingListViewModel @Inject constructor(
                 dialogSearchBarInput = input
             )
         }
-        if(state.value.dialogSearchBarInput.trim().length >= 3){
+        /*if(state.value.dialogSearchBarInput.trim().length >= 3){
             viewModelScope.launch {
                 try{
                     _state.update {
                         it.copy(
                             dialogItems = productOperations.getProductsNamedAsUseCase
                                 .invoke(state.value.dialogSearchBarInput.trim())
-                                .getOrThrow().map { product ->  product.asProductUi() }
+                                .getOrThrow().map { product ->  product.asProductUi() }.toMutableList()
                         )
                     }
+
                 }catch (e: Exception){
-                    _uiEvent.send(UiEvent.Failure(UiText.DynamicString(e.message ?: "Unknown error")))
+                    _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -168,18 +215,22 @@ data class CreateShoppingListState(
     val items: MutableList<Product> = mutableListOf(),
     var isDialogOpened: Boolean = false,
     val dialogSearchBarInput: String = "",
-    val dialogItems: List<ProductUi> = listOf(),
+    var dialogItems: List<ProductUi> =listOf(
+        ProductUi(
+            id = "1",
+            name = "teszt",
+            selectedAmountWholePart = 0,
+            selectedAmountFractionPart = 0
+        )
+    ),
     val isLoading: Boolean = true,
     val error: Throwable? = null
 )
 
 sealed class CreateShoppingListEvent{
     data class NameChanged(val input: String): CreateShoppingListEvent()
-
     data object AddButtonClicked : CreateShoppingListEvent()
-
     data class DeleteListItem(val item: Product): CreateShoppingListEvent()
     data object CreateButtonClicked: CreateShoppingListEvent()
-
     data object DialogDismissed: CreateShoppingListEvent()
 }

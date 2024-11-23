@@ -2,9 +2,13 @@ package hu.bme.aut.android.shoppinglist.feature.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.bme.aut.android.shoppinglist.R
+import hu.bme.aut.android.shoppinglist.domain.model.PriceAtTimePoint
+import hu.bme.aut.android.shoppinglist.domain.model.Product
 import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
+import hu.bme.aut.android.shoppinglist.domain.usecases.products.ProductUseCases
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 import hu.bme.aut.android.shoppinglist.util.IAddProductDialogUser
@@ -15,11 +19,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.NumberFormatException
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-
+    private val productOperations: ProductUseCases
 ) : ViewModel(), IAddProductDialogUser {
     private val _state = MutableStateFlow(MainState())
     val state: StateFlow<MainState> = _state
@@ -72,68 +78,140 @@ class MainViewModel @Inject constructor(
             }
         }else{
             viewModelScope.launch {
-                _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_long_product_name)))
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.too_long_product_name)))
             }
         }
     }
 
-    override fun getLidlPrice(): Int {
-        return _state.value.lidlPrice
-    }
-
-    override fun updateLidlPrice(input: Int) {
-        if(input > 0){
-            _state.update {
-                it.copy(
-                    lidlPrice = input
-                )
-            }
+    override fun getLidlPrice(): String {
+        return if(_state.value.lidlPrice == 0){
+            ""
         }else{
+            _state.value.lidlPrice.toString()
+        }
+    }
+
+    override fun updateLidlPrice(input: String) {
+        try{
+            if(input.toInt() > 0){
+                _state.update {
+                    it.copy(
+                        lidlPrice = input.toInt()
+                    )
+                }
+            }else{
+                viewModelScope.launch {
+                    _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.negative_price_error)))
+                }
+            }
+        }catch (e: NumberFormatException){
             viewModelScope.launch {
-                _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.negative_price_error)))
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.invalid_number_format_error)))
             }
         }
-
     }
 
-    override fun getTescoPrice(): Int {
-        return _state.value.tescoPrice
-    }
-
-    override fun updateTescoPrice(input: Int) {
-        if(input > 0){
-            _state.update {
-                it.copy(
-                    tescoPrice = input
-                )
-            }
+    override fun getTescoPrice(): String {
+        return if(_state.value.tescoPrice == 0){
+            ""
         }else{
-            viewModelScope.launch {
-                _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.negative_price_error)))
-            }
+            _state.value.tescoPrice.toString()
         }
     }
 
-    override fun getSparPrice(): Int {
-        return _state.value.sparPrice
+    override fun updateTescoPrice(input: String) {
+        try{
+            if(input.toInt() > 0){
+                _state.update {
+                    it.copy(
+                        tescoPrice = input.toInt()
+                    )
+                }
+            }else{
+                viewModelScope.launch {
+                    _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.negative_price_error)))
+                }
+            }
+        }catch (e: NumberFormatException){
+            viewModelScope.launch {
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.invalid_number_format_error)))
+            }
+        }
+
     }
 
-    override fun updateSparPrice(input: Int) {
-        if(input > 0){
-            _state.update {
-                it.copy(
-                    sparPrice = input
-                )
-            }
+    override fun getSparPrice(): String {
+        return if(_state.value.sparPrice == 0){
+            ""
         }else{
+            _state.value.sparPrice.toString()
+        }
+    }
+
+    override fun updateSparPrice(input: String) {
+        try{
+            if(input.toInt() > 0){
+                _state.update {
+                    it.copy(
+                        sparPrice = input.toInt()
+                    )
+                }
+            }else{
+                viewModelScope.launch {
+                    _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.negative_price_error)))
+                }
+            }
+        }catch (e: NumberFormatException){
             viewModelScope.launch {
-                _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.negative_price_error)))
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.invalid_number_format_error)))
             }
         }
+
     }
 
     override fun processDialogResult() {
-        TODO("Not yet implemented")
+        var addSucceeded: Boolean
+        viewModelScope.launch {
+            try {
+                val currentTime = Timestamp(Date())
+                addSucceeded = productOperations.saveProduct.invoke(
+                    Product(
+                        name = _state.value.dialogName,
+                        lidlPrices = if (_state.value.lidlPrice > 0) {
+                            listOf(
+                                PriceAtTimePoint(_state.value.lidlPrice, currentTime)
+                            )
+                        } else {
+                            emptyList()
+                        },
+                        tescoPrices = if (_state.value.tescoPrice > 0) {
+                            listOf(
+                                PriceAtTimePoint(_state.value.tescoPrice, currentTime)
+                            )
+                        } else {
+                            emptyList()
+                        },
+                        sparPrices = if (_state.value.sparPrice > 0) {
+                            listOf(
+                                PriceAtTimePoint(_state.value.sparPrice, currentTime)
+                            )
+                        } else {
+                            emptyList()
+                        }
+                    )
+                ).getOrThrow()
+                if (addSucceeded) {
+                    _state.update {
+                        it.copy(isDialogOpen = false)
+                    }
+                    _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.add_dialog_success)))
+                } else {
+                    _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.product_already_exists_failure)))
+                }
+            }catch (e: Exception){
+                _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
+            }
+        }
     }
 }
 

@@ -45,7 +45,7 @@ class LoginViewModel @Inject constructor(
                 }
                 else{
                     viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_long_email)))
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.too_long_email)))
                     }
                 }
             }
@@ -58,12 +58,12 @@ class LoginViewModel @Inject constructor(
                 }
                 else if(newValue.trim().length < passwordMinLength){
                     viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_short_password)))
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.too_short_password)))
                     }
                 }
                 else{
                     viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_long_password)))
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.too_long_password)))
                     }
                 }
             }
@@ -81,10 +81,10 @@ class LoginViewModel @Inject constructor(
                 viewModelScope.launch {
                     try{
                         if(state.value.email.isBlank()){
-                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.empty_email_field)))
+                            _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.empty_email_field)))
                         }
                         else if(state.value.password.isBlank()){
-                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.empty_password_field)))
+                            _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.empty_password_field)))
                         }
                         else{
                             authOperations.authenticateUser(
@@ -94,7 +94,7 @@ class LoginViewModel @Inject constructor(
                             _uiEvent.send(UiEvent.Success)
                         }
                     }catch (e: Exception){
-                        _uiEvent.send(UiEvent.Failure(UiText.DynamicString(e.message ?: "Unknown error")))
+                        _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
                     }
                     _state.update {
                         it.copy(

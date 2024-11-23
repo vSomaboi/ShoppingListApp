@@ -3,7 +3,7 @@ package hu.bme.aut.android.shoppinglist.data.products
 import hu.bme.aut.android.shoppinglist.domain.model.Product
 
 interface ProductService {
-    suspend fun saveProduct(product: Product)
+    suspend fun saveProduct(product: Product): Boolean
 
     suspend fun updateProduct(product: Product)
 

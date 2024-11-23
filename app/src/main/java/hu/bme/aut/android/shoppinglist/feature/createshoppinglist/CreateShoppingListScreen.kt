@@ -20,20 +20,18 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemColors
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -52,7 +50,6 @@ import hu.bme.aut.android.shoppinglist.ui.common.ProductSelectionDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ShoppingListLoadingScreen
 import hu.bme.aut.android.shoppinglist.ui.theme.ShoppingListTheme
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
-import kotlinx.coroutines.launch
 
 @Composable
 fun CreateShoppingListScreen(
@@ -69,7 +66,7 @@ fun CreateShoppingListScreen(
                 is UiEvent.Success -> {
 
                 }
-                is UiEvent.Failure -> {
+                is UiEvent.Notification -> {
                     Toast.makeText(context, uiEvent.message.asString(context), Toast.LENGTH_LONG).show()
                 }
             }
@@ -158,7 +155,10 @@ fun CreateShoppingListScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         IconButton(
-                            onClick = { viewModel.onEvent(CreateShoppingListEvent.AddButtonClicked) }
+                            onClick = { viewModel.onEvent(CreateShoppingListEvent.AddButtonClicked) },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onBackground
+                            )
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_add),
@@ -283,7 +283,6 @@ fun CreateShoppingListScreen(
     )
 }
 
-/*
 @Composable
 @Preview
 fun CreateShoppingListPreview(){
@@ -291,4 +290,4 @@ fun CreateShoppingListPreview(){
     ShoppingListTheme {
         CreateShoppingListScreen(viewModel)
     }
-}*/
+}

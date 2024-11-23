@@ -65,7 +65,7 @@ fun MainScreen(
                 is UiEvent.Success -> {
 
                 }
-                is UiEvent.Failure -> {
+                is UiEvent.Notification -> {
                     Toast.makeText(context, uiEvent.message.asString(context), Toast.LENGTH_LONG).show()
                 }
             }
@@ -298,6 +298,7 @@ fun MainScreen(
     )
 }
 
+/*
 @Composable
 @Preview
 fun MainPreview(){
@@ -305,4 +306,4 @@ fun MainPreview(){
     ShoppingListTheme {
         MainScreen(viewModel)
     }
-}
+}*/

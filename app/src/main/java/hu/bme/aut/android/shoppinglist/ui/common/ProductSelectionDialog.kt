@@ -11,11 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -42,10 +43,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import hu.bme.aut.android.shoppinglist.R
 import hu.bme.aut.android.shoppinglist.util.ISelectionDialogUser
 import hu.bme.aut.android.shoppinglist.util.iconMinSize
+import hu.bme.aut.android.shoppinglist.util.selectedAmountInputFieldSize
 
 @Composable
 fun ProductSelectionDialog(
@@ -78,19 +81,18 @@ fun ProductSelectionDialog(
                     value = dataProvider.getSearchBarInput(),
                     onValueChange = { dataProvider.updateSearchBar(it) },
                     colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedContainerColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.primary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.onSecondary,
-                        focusedBorderColor = MaterialTheme.colorScheme.onPrimary,
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSecondary,
-                        focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                        unfocusedLabelColor = MaterialTheme.colorScheme.onSecondary,
-                        focusedLabelColor = MaterialTheme.colorScheme.onPrimary
+                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                        focusedContainerColor = MaterialTheme.colorScheme.secondary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                        focusedTextColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.onTertiary,
+                        focusedBorderColor = MaterialTheme.colorScheme.onSecondary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onTertiary,
+                        focusedLabelColor = MaterialTheme.colorScheme.onSecondary
                     ),
                     label = {
                         Text(
-                            text = stringResource(id = R.string.searchbar_label),
-                            style = MaterialTheme.typography.bodyLarge
+                            text = stringResource(id = R.string.searchbar_label)
                         )
                     }
                 )
@@ -100,19 +102,19 @@ fun ProductSelectionDialog(
                         .padding(dimensionResource(id = R.dimen.padding_l))
                         .clip(shape = RoundedCornerShape(dimensionResource(id = R.dimen.corner_rounding)))
                         .background(
-                            color = MaterialTheme.colorScheme.secondary,
+                            color = MaterialTheme.colorScheme.tertiary,
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.corner_rounding))
                         )
                         .border(
                             width = dimensionResource(id = R.dimen.border_extra_thin),
-                            brush = SolidColor(value = MaterialTheme.colorScheme.onSecondary),
+                            brush = SolidColor(value = MaterialTheme.colorScheme.onTertiary),
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.corner_rounding))
                         )
                 ) {
                     items(dataProvider.getItemList(), key = { product -> product.id }){product ->
                         ListItem(
                             colors = ListItemDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.secondary
+                                containerColor = MaterialTheme.colorScheme.tertiary
                             ),
                             headlineContent = {
                                 Column{
@@ -125,20 +127,23 @@ fun ProductSelectionDialog(
                                         Text(
                                             text = product.name,
                                             style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSecondary,
+                                            color = MaterialTheme.colorScheme.onTertiary,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Button(
                                             border = BorderStroke(
                                                 width = dimensionResource(id = R.dimen.border_thin),
-                                                color = MaterialTheme.colorScheme.onPrimary
+                                                color = MaterialTheme.colorScheme.onSecondary
+                                            ),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.secondary
                                             ),
                                             onClick = { dataProvider.processSelectionResult(product) }
                                         ) {
                                             Text(
                                                 text = stringResource(id = R.string.add_button_text),
                                                 style = MaterialTheme.typography.bodyLarge,
-                                                color = MaterialTheme.colorScheme.onPrimary
+                                                color = MaterialTheme.colorScheme.onSecondary
                                             )
                                         }
                                     }
@@ -152,7 +157,7 @@ fun ProductSelectionDialog(
                                             Text(
                                                 text = buildAnnotatedString {
                                                     withStyle(style = SpanStyle(
-                                                        color = MaterialTheme.colorScheme.onSecondary
+                                                        color = MaterialTheme.colorScheme.onTertiary
                                                     )){
                                                         append(stringResource(id = R.string.lidl_price_label))
                                                     }
@@ -164,7 +169,7 @@ fun ProductSelectionDialog(
                                                         append("${product.lidlPrices.lastOrNull()?.price ?: "Unknown"}")
                                                     }
                                                     withStyle(style = SpanStyle(
-                                                        color = MaterialTheme.colorScheme.onSecondary,
+                                                        color = MaterialTheme.colorScheme.onTertiary,
                                                         fontWeight = FontWeight.Bold
                                                     )){
                                                         append(stringResource(id = R.string.price_unit_huf))
@@ -174,7 +179,7 @@ fun ProductSelectionDialog(
                                             Text(
                                                 text = buildAnnotatedString {
                                                     withStyle(style = SpanStyle(
-                                                        color = MaterialTheme.colorScheme.onSecondary
+                                                        color = MaterialTheme.colorScheme.onTertiary
                                                     )){
                                                         append(stringResource(id = R.string.tesco_price_label))
                                                     }
@@ -186,7 +191,7 @@ fun ProductSelectionDialog(
                                                         append("${product.tescoPrices.lastOrNull()?.price ?: "Unknown"}")
                                                     }
                                                     withStyle(style = SpanStyle(
-                                                        color = MaterialTheme.colorScheme.onSecondary,
+                                                        color = MaterialTheme.colorScheme.onTertiary,
                                                         fontWeight = FontWeight.Bold
                                                     )){
                                                         append(stringResource(id = R.string.price_unit_huf))
@@ -198,7 +203,7 @@ fun ProductSelectionDialog(
                                             Text(
                                                 text = buildAnnotatedString {
                                                     withStyle(style = SpanStyle(
-                                                        color = MaterialTheme.colorScheme.onSecondary
+                                                        color = MaterialTheme.colorScheme.onTertiary
                                                     )){
                                                         append(stringResource(id = R.string.spar_price_label))
                                                     }
@@ -210,7 +215,7 @@ fun ProductSelectionDialog(
                                                         append("${product.sparPrices.lastOrNull()?.price ?: "Unknown"}")
                                                     }
                                                     withStyle(style = SpanStyle(
-                                                        color = MaterialTheme.colorScheme.onSecondary,
+                                                        color = MaterialTheme.colorScheme.onTertiary,
                                                         fontWeight = FontWeight.Bold
                                                     )){
                                                         append(stringResource(id = R.string.price_unit_huf))
@@ -222,12 +227,12 @@ fun ProductSelectionDialog(
                                     Row(
                                         modifier = Modifier
                                             .fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        horizontalArrangement = Arrangement.Center,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         IconButton(
                                             onClick = {
-                                                dataProvider.changeSelectedAmount(product, -1)
+                                                dataProvider.changeSelectedAmountWholePart(product, -1)
                                             },
                                             modifier = Modifier
                                                 .requiredSize(iconMinSize.dp)
@@ -238,31 +243,57 @@ fun ProductSelectionDialog(
                                                 tint = MaterialTheme.colorScheme.primary
                                             )
                                         }
-                                        BasicTextField(
+                                        OutlinedTextField(
                                             modifier = Modifier
-                                                .border(
-                                                    width = 1.dp,
-                                                    color = MaterialTheme.colorScheme.primary,
-                                                    shape = RoundedCornerShape(dimensionResource(id = R.dimen.corner_rounding))
+                                                .padding(
+                                                    dimensionResource(id = R.dimen.padding_s)
                                                 )
-                                                .padding(dimensionResource(id = R.dimen.padding_s)),
-                                            value = product.selectedAmount.toString(),
-                                            onValueChange = { dataProvider.setSelectedAmount(product, it.toFloat()) },
+                                                .requiredWidth(selectedAmountInputFieldSize.dp),
+                                            value = product.selectedAmountWholePart.toString(),
+                                            onValueChange = { dataProvider.setSelectedAmountWholePart(product, it) },
+                                            textStyle = MaterialTheme.typography.bodyLarge.copy(
+                                                textAlign = TextAlign.Center,
+                                                letterSpacing = 0.sp
+                                            ),
+                                            colors = OutlinedTextFieldDefaults.colors(
+                                                unfocusedTextColor = MaterialTheme.colorScheme.onTertiary,
+                                                focusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                                                unfocusedBorderColor = MaterialTheme.colorScheme.onTertiary,
+                                                focusedBorderColor = MaterialTheme.colorScheme.onSecondary,
+                                                unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                                                focusedContainerColor = MaterialTheme.colorScheme.secondary
+                                            )
+                                        )
+                                        Text(
+                                            text = ".",
+                                            style = MaterialTheme.typography.bodyLarge.copy(
+                                                fontWeight = FontWeight.Bold,
+                                                fontSize = 30.sp
+                                            ),
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier
+                                                .requiredWidth(10.dp)
+                                        )
+                                        OutlinedTextField(
+                                            modifier = Modifier
+                                                .padding(dimensionResource(id = R.dimen.padding_s))
+                                                .requiredWidth(selectedAmountInputFieldSize.dp),
+                                            value = product.selectedAmountFractionPart.toString(),
+                                            onValueChange = { dataProvider.setSelectedAmountFractionPart(product, it) },
                                             textStyle = MaterialTheme.typography.bodyLarge.copy(
                                                 textAlign = TextAlign.Center
                                             ),
-                                            decorationBox = { innerTextField ->
-                                                Row(
-                                                    horizontalArrangement = Arrangement.Center,
-                                                    modifier = Modifier
-                                                        .fillMaxWidth(0.5f)
-                                                ){
-                                                    innerTextField()
-                                                }
-                                            }
+                                            colors = OutlinedTextFieldDefaults.colors(
+                                                unfocusedTextColor = MaterialTheme.colorScheme.onTertiary,
+                                                focusedTextColor = MaterialTheme.colorScheme.onSecondary,
+                                                unfocusedBorderColor = MaterialTheme.colorScheme.onTertiary,
+                                                focusedBorderColor = MaterialTheme.colorScheme.onSecondary,
+                                                unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                                                focusedContainerColor = MaterialTheme.colorScheme.secondary
+                                            )
                                         )
                                         IconButton(onClick = {
-                                                dataProvider.changeSelectedAmount(product, 1)
+                                                dataProvider.changeSelectedAmountWholePart(product, 1)
                                             },
                                             modifier = Modifier
                                                 .requiredSize(iconMinSize.dp)
@@ -279,7 +310,7 @@ fun ProductSelectionDialog(
                             supportingContent = {
                                 HorizontalDivider(
                                     thickness = dimensionResource(id = R.dimen.border_thin),
-                                    color = MaterialTheme.colorScheme.onSecondary
+                                    color = MaterialTheme.colorScheme.onTertiary
                                 )
                             }
                         )
@@ -304,14 +335,13 @@ fun ProductSelectionDialog(
     }
 }
 
-/*
-@Composable
+/*@Composable
 @Preview
 fun SelectionDialogPreview(){
     ShoppingListTheme {
         ProductSelectionDialog(
-            onDismissRequest = { */
-/*TODO*//*
+            onDismissRequest = {
+  //TODO
  },
             dataProvider = CreateShoppingListViewModel()
         )

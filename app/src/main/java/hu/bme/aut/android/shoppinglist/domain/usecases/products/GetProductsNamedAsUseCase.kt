@@ -1,5 +1,6 @@
 package hu.bme.aut.android.shoppinglist.domain.usecases.products
 
+import android.util.Log
 import hu.bme.aut.android.shoppinglist.data.products.ProductService
 import hu.bme.aut.android.shoppinglist.domain.model.Product
 

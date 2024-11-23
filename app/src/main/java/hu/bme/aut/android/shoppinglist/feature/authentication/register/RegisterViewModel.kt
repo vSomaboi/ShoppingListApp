@@ -42,7 +42,7 @@ class RegisterViewModel @Inject constructor(
                 }
                 else{
                     viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_long_email)))
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.too_long_email)))
                     }
                 }
             }
@@ -55,7 +55,7 @@ class RegisterViewModel @Inject constructor(
                 }
                 else{
                     viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_long_password)))
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.too_long_password)))
                     }
                 }
             }
@@ -68,7 +68,7 @@ class RegisterViewModel @Inject constructor(
                 }
                 else{
                     viewModelScope.launch {
-                        _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.too_long_password)))
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.too_long_password)))
                     }
                 }
             }
@@ -91,13 +91,13 @@ class RegisterViewModel @Inject constructor(
                 viewModelScope.launch {
                     try{
                         if(state.value.email.isBlank()){
-                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.empty_email_field)))
+                            _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.empty_email_field)))
                         }
                         else if(state.value.password.isBlank()){
-                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.empty_password_field)))
+                            _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.empty_password_field)))
                         }
                         else if(state.value.confirmPassword != state.value.password){
-                            _uiEvent.send(UiEvent.Failure(UiText.StringResource(R.string.password_does_not_match_confirm_password)))
+                            _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.password_does_not_match_confirm_password)))
                         }
                         else{
                             authOperations.registerUser(
@@ -107,7 +107,7 @@ class RegisterViewModel @Inject constructor(
                             _uiEvent.send(UiEvent.Success)
                         }
                     }catch (e: Exception){
-                        _uiEvent.send(UiEvent.Failure(UiText.DynamicString(e.message ?: "Unknown error")))
+                        _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
                     }
                     _state.update {
                         it.copy(

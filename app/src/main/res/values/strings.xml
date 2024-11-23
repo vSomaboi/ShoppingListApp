@@ -46,4 +46,7 @@
     <string name="submit_button_text">Submit</string>
     <string name="too_long_product_name">Product name cannot exceed 40 characters!</string>
     <string name="negative_price_error">The given price info value cannot be zero or lower!</string>
+    <string name="invalid_number_format_error">That is not a valid value for price</string>
+    <string name="add_dialog_success">Product added successfully</string>
+    <string name="product_already_exists_failure">Product already exists, try providing a more specific name</string>
 </resources>

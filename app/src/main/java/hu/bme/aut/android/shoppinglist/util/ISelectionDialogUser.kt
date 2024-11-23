@@ -6,9 +6,9 @@ interface ISelectionDialogUser {
     fun getSearchBarInput() : String
     fun updateSearchBar(input: String)
     fun getItemList() : List<ProductUi>
-
-    fun changeSelectedAmount(item: ProductUi, diff: Int)
-
-    fun setSelectedAmount(item: ProductUi, newAmount: Float)
+    fun changeSelectedAmountWholePart(item: ProductUi, diff: Int)
+    fun setSelectedAmountWholePart(item: ProductUi, newAmount: String)
+    fun changeSelectedAmountFractionPart(item: ProductUi, diff: Int)
+    fun setSelectedAmountFractionPart(item: ProductUi, newAmount: String)
     fun processSelectionResult(selectedItem: ProductUi)
 }
