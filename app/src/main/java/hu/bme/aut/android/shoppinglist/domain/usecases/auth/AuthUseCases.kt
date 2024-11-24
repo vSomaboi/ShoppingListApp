@@ -7,4 +7,5 @@ class AuthUseCases(
 ) {
     val authenticateUser = AuthenticateUserUseCase(authService)
     val registerUser = RegisterUserUseCase(authService)
+    val hasUser = HasUserUseCase(authService)
 }

@@ -6,7 +6,7 @@ import hu.bme.aut.android.shoppinglist.domain.model.User
 class CreateUserUseCase(
     private val userService: UserService
 ) {
-    suspend operator fun invoke(user: User){
-        userService.createUser(user)
+    suspend operator fun invoke(){
+        userService.createUser()
     }
 }

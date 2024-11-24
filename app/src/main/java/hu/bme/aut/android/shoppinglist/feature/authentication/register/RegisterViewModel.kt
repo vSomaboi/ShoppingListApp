@@ -100,7 +100,7 @@ class RegisterViewModel @Inject constructor(
                             _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.password_does_not_match_confirm_password)))
                         }
                         else{
-                            authOperations.registerUser(
+                            authOperations.registerUser.invoke(
                                 state.value.email,
                                 state.value.password
                             )

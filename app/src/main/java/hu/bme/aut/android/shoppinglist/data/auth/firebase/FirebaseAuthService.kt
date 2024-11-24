@@ -1,10 +1,13 @@
 package hu.bme.aut.android.shoppinglist.data.auth.firebase
 
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import hu.bme.aut.android.shoppinglist.data.auth.AuthService
 import hu.bme.aut.android.shoppinglist.domain.model.User
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await

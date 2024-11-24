@@ -9,6 +9,7 @@ import hu.bme.aut.android.shoppinglist.domain.model.PriceAtTimePoint
 import hu.bme.aut.android.shoppinglist.domain.model.Product
 import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.domain.usecases.products.ProductUseCases
+import hu.bme.aut.android.shoppinglist.domain.usecases.users.UserUseCases
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 import hu.bme.aut.android.shoppinglist.util.IAddProductDialogUser
@@ -25,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val productOperations: ProductUseCases
+    private val productOperations: ProductUseCases,
+    private val userOperations: UserUseCases
 ) : ViewModel(), IAddProductDialogUser {
     private val _state = MutableStateFlow(MainState())
     val state: StateFlow<MainState> = _state
@@ -34,6 +36,13 @@ class MainViewModel @Inject constructor(
     val uiEvent = _uiEvent.receiveAsFlow()
 
     init{
+        viewModelScope.launch {
+            try{
+                userOperations.createUser.invoke()
+            }catch (e: Exception){
+                _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message.toString())))
+            }
+        }
         _state.update {
             it.copy(
                 isLoading = false

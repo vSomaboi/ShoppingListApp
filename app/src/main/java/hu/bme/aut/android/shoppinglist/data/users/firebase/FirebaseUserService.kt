@@ -21,10 +21,23 @@ class FirebaseUserService @Inject constructor() : UserService {
     private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    private val currentUserId = firebaseAuth.currentUser?.uid
+    private val currentUser = firebaseAuth.currentUser
+    private val currentUserId = currentUser?.uid
 
-    override suspend fun createUser(user: User) {
-        fireStore.collection(USER_COLLECTION).document(currentUserId!!).set(user.asFirebaseUser()).await()
+    override suspend fun createUser() {
+        val newUser = User(
+            id = currentUserId!!,
+            email = currentUser!!.email!!,
+        )
+        val identicalNamedUsers = fireStore.collection(USER_COLLECTION)
+            .whereEqualTo("email", newUser.email)
+            .limit(1)
+            .get()
+            .await()
+            .toObjects<FirebaseUser>()
+        if(identicalNamedUsers.isEmpty()){
+            fireStore.collection(USER_COLLECTION).document(currentUserId).set(newUser.asFirebaseUser()).await()
+        }
     }
 
     override suspend fun saveOwnList(list: ShoppingList) {
@@ -60,7 +73,7 @@ class FirebaseUserService @Inject constructor() : UserService {
     }
 
     override suspend fun updateUser(user: User) {
-        fireStore.collection(USER_COLLECTION).document(user.firebaseId)
+        fireStore.collection(USER_COLLECTION).document(user.id)
             .set(user.asFirebaseUser(), SetOptions.merge()).await()
     }
 

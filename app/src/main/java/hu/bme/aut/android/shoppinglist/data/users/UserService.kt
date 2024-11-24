@@ -4,7 +4,7 @@ import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.domain.model.User
 
 interface UserService {
-    suspend fun createUser(user: User)
+    suspend fun createUser()
 
     suspend fun updateUser(user: User)
 
