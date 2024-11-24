@@ -7,6 +7,8 @@
     <string name="tesco_price_label">Tesco:</string>
     <string name="spar_price_label">Spar:</string>
     <string name="price_unit_huf">Ft</string>
+    <string name="cancel_dialog">Cancel</string>
+    <string name="submit_button_text">Submit</string>
     <!--Input errors-->
     <string name="too_long_email">The length of the email cannot exceed 35 characters!</string>
     <string name="too_long_password">The length of the password cannot exceed 25 characters!</string>
@@ -39,14 +41,19 @@
     <string name="unexpected_error_message">An unexpected error occurred, please try refreshing the list of products, then retry the operation.</string>
     <string name="add_button_text">Add to list</string>
     <string name="invalid_selected_amount_error">You cannot add less than or equal to zero amount of an item to your list.</string>
-    <string name="cancel_dialog">Cancel</string>
     <!--AddProductDialog-->
     <string name="add_product_dialog_info_text">Price info (optional):</string>
     <string name="label_name">Enter name here</string>
-    <string name="submit_button_text">Submit</string>
     <string name="too_long_product_name">Product name cannot exceed 40 characters!</string>
     <string name="negative_price_error">The given price info value cannot be zero or lower!</string>
     <string name="invalid_number_format_error">That is not a valid value for price</string>
     <string name="add_dialog_success">Product added successfully</string>
     <string name="product_already_exists_failure">Product already exists, try providing a more specific name</string>
+    <!--AddContactDialog-->
+    <string name="email_text_field_label">Enter contact email here</string>
+    <string name="send_request_success">Request sent successfully</string>
+    <string name="target_not_found_failure">No user with the given email address were found</string>
+    <!--ContactsScreen-->
+    <string name="add_contact_button_text">Add new contact</string>
+    <string name="contact_remove_success">Contact removed successfully</string>
 </resources>

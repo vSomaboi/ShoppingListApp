@@ -61,24 +61,26 @@ class MainViewModel @Inject constructor(
             is MainEvent.ModifySharedClicked -> {
 
             }
-            is MainEvent.DialogOpened -> {
+            is MainEvent.AddProductDialogOpened -> {
                 _state.update {
-                    it.copy(isDialogOpen = true)
+                    it.copy(isProductDialogOpen = true)
                 }
             }
-            is MainEvent.DialogDismissed -> {
+            is MainEvent.AddProductDialogDismissed -> {
                 _state.update {
-                    it.copy(isDialogOpen = false)
+                    it.copy(isProductDialogOpen = false)
                 }
             }
         }
     }
 
+    //AddProductDialog Overrides
+
     override fun getProductName(): String {
         return _state.value.dialogName
     }
 
-    override fun updateName(input: String) {
+    override fun updateProductName(input: String) {
         if(input.length <= productNameMaxLength){
             _state.update {
                 it.copy(
@@ -178,7 +180,7 @@ class MainViewModel @Inject constructor(
 
     }
 
-    override fun processDialogResult() {
+    override fun processProductDialogResult() {
         var addSucceeded: Boolean
         viewModelScope.launch {
             try {
@@ -211,7 +213,7 @@ class MainViewModel @Inject constructor(
                 ).getOrThrow()
                 if (addSucceeded) {
                     _state.update {
-                        it.copy(isDialogOpen = false)
+                        it.copy(isProductDialogOpen = false)
                     }
                     _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.add_dialog_success)))
                 } else {
@@ -240,11 +242,13 @@ data class MainState(
             name = "test2"
         )
     ),
-    val isDialogOpen: Boolean = false,
+    //AddProductDialog Data
+    val isProductDialogOpen: Boolean = false,
     val dialogName: String = "",
     val lidlPrice: Int = 0,
     val tescoPrice: Int = 0,
     val sparPrice: Int = 0,
+
     val numberOfRequests: Int = 0,
     val error: Throwable? = null
 )
@@ -253,6 +257,6 @@ sealed class MainEvent{
     data class ListClicked(val list: ShoppingList): MainEvent()
     data class ModifyOwnClicked(val list: ShoppingList): MainEvent()
     data class ModifySharedClicked(val list: ShoppingList): MainEvent()
-    data object DialogOpened: MainEvent()
-    data object DialogDismissed: MainEvent()
+    data object AddProductDialogOpened: MainEvent()
+    data object AddProductDialogDismissed: MainEvent()
 }

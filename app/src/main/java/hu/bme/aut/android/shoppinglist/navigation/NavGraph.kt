@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import hu.bme.aut.android.shoppinglist.feature.authentication.login.LoginScreen
 import hu.bme.aut.android.shoppinglist.feature.authentication.register.RegisterScreen
+import hu.bme.aut.android.shoppinglist.feature.contacts.ContactsScreen
 import hu.bme.aut.android.shoppinglist.feature.createshoppinglist.CreateShoppingListScreen
 import hu.bme.aut.android.shoppinglist.feature.main.MainScreen
 
@@ -47,11 +48,19 @@ fun NavGraph(
                     navController.navigate(
                         route = Screen.CreateList.route
                     )
+                },
+                contactsButtonClicked = {
+                    navController.navigate(
+                        route = Screen.Contacts.route
+                    )
                 }
             )
         }
         composable(Screen.CreateList.route){
             CreateShoppingListScreen()
+        }
+        composable(Screen.Contacts.route) {
+            ContactsScreen()
         }
     }
 }

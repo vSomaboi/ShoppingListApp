@@ -8,6 +8,7 @@ class UserUseCases(
     val createUser = CreateUserUseCase(userService)
     val updateUser = UpdateUserUseCase(userService)
     val deleteUser = DeleteUserUseCase(userService)
+    val sendRequest = SendRequestUseCase(userService)
     val saveOwnList = SaveOwnListUseCase(userService)
     val updateOwnList = UpdateOwnListUseCase(userService)
     val deleteOwnList = DeleteOwnListUseCase(userService)
@@ -16,4 +17,6 @@ class UserUseCases(
     val deleteSharedList = DeleteSharedListUseCase(userService)
     val getOwnListsOfUser = GetOwnListsOfUserUseCase(userService)
     val getSharedListsOfUser = GetSharedListsOfUserUseCase(userService)
+    val addContact = AddContactUseCase(userService)
+    val removeContact = RemoveContactUseCase(userService)
 }

@@ -1,6 +1,5 @@
 package hu.bme.aut.android.shoppinglist.feature.main
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -16,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -36,23 +36,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hu.bme.aut.android.shoppinglist.R
+import hu.bme.aut.android.shoppinglist.ui.common.AddContactDialog
 import hu.bme.aut.android.shoppinglist.ui.common.AddProductDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ShoppingListLoadingScreen
-import hu.bme.aut.android.shoppinglist.ui.theme.ShoppingListTheme
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
-    newContactButtonClicked: () -> Unit = {},
     notificationsButtonClicked: () -> Unit = {},
+    contactsButtonClicked: () -> Unit = {},
     createButtonClicked: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -73,9 +72,9 @@ fun MainScreen(
         }
     }
 
-    if(state.isDialogOpen){
+    if(state.isProductDialogOpen){
         AddProductDialog(
-            onDismissRequest = { viewModel.onEvent(MainEvent.DialogDismissed) },
+            onDismissRequest = { viewModel.onEvent(MainEvent.AddProductDialogDismissed) },
             dataProvider = viewModel
         )
     }
@@ -86,7 +85,7 @@ fun MainScreen(
                 title = {},
                 actions = {
                     IconButton(
-                        onClick = { newContactButtonClicked() }
+                        onClick = { contactsButtonClicked() }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add_contact),
@@ -102,7 +101,7 @@ fun MainScreen(
                         )
                     }
                     IconButton(
-                        onClick = { viewModel.onEvent(MainEvent.DialogOpened) }
+                        onClick = { viewModel.onEvent(MainEvent.AddProductDialogOpened) }
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add),
@@ -219,7 +218,23 @@ fun MainScreen(
                         onClick = { createButtonClicked() },
                         border = BorderStroke(
                             width = dimensionResource(id = R.dimen.border_thin),
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = if(isPressed){
+                                MaterialTheme.colorScheme.onPrimary
+                            }else{
+                                MaterialTheme.colorScheme.onSecondary
+                            }
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if(isPressed){
+                                MaterialTheme.colorScheme.primary
+                            }else{
+                                MaterialTheme.colorScheme.secondary
+                            },
+                            contentColor = if(isPressed){
+                                MaterialTheme.colorScheme.onPrimary
+                            }else{
+                                MaterialTheme.colorScheme.onSecondary
+                            }
                         )
                     ) {
                         Text(

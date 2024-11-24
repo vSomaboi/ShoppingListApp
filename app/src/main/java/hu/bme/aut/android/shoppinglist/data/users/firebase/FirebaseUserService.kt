@@ -40,6 +40,66 @@ class FirebaseUserService @Inject constructor() : UserService {
         }
     }
 
+    override suspend fun sendRequest(targetEmail: String) : Boolean {
+        val targetUser = fireStore.collection(USER_COLLECTION)
+            .whereEqualTo("email", targetEmail)
+            .limit(1)
+            .get()
+            .await()
+            .toObjects<FirebaseUser>()
+        return if(targetUser.isNotEmpty()){
+            fireStore.collection(USER_COLLECTION)
+                .document(targetUser.first().id)
+                .update("requests", FieldValue.arrayUnion(currentUser!!.email)).await()
+            true
+        }else{
+            false
+        }
+    }
+
+    override suspend fun addContact(contactEmail: String) {
+        fireStore.collection(USER_COLLECTION)
+            .document(currentUserId!!)
+            .update("contacts", FieldValue.arrayUnion(contactEmail))
+            .await()
+
+        val contact = fireStore.collection(USER_COLLECTION)
+            .whereEqualTo("email", contactEmail)
+            .limit(1)
+            .get()
+            .await()
+            .toObjects<FirebaseUser>()
+
+        if(contact.isNotEmpty()){
+            fireStore.collection(USER_COLLECTION)
+                .document(contact.first().id)
+                .update("contacts", FieldValue.arrayUnion(currentUser!!.email))
+                .await()
+        }
+    }
+
+    override suspend fun removeContact(contactEmail: String) {
+        fireStore.collection(USER_COLLECTION)
+            .document(currentUserId!!)
+            .update("contacts", FieldValue.arrayRemove(contactEmail))
+            .await()
+
+        val contact = fireStore.collection(USER_COLLECTION)
+            .whereEqualTo("email", contactEmail)
+            .limit(1)
+            .get()
+            .await()
+            .toObjects<FirebaseUser>()
+
+        if(contact.isNotEmpty()){
+            fireStore.collection(USER_COLLECTION)
+                .document(contact.first().id)
+                .update("contacts", FieldValue.arrayRemove(currentUser!!.email))
+                .await()
+        }
+
+    }
+
     override suspend fun saveOwnList(list: ShoppingList) {
         fireStore.collection(USER_COLLECTION).document(currentUserId!!)
             .collection(USER_SHOPPING_LIST_COLLECTION).add(list.asFirebaseShoppingList()).await()

@@ -1,7 +1,6 @@
 package hu.bme.aut.android.shoppinglist.ui.common
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -77,7 +76,7 @@ fun AddProductDialog(
                             width = Dimension.fillToConstraints
                         },
                     value = dataProvider.getProductName(),
-                    onValueChange = { dataProvider.updateName(it) },
+                    onValueChange = { dataProvider.updateProductName(it) },
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
                         focusedContainerColor = MaterialTheme.colorScheme.secondary,
@@ -255,7 +254,7 @@ fun AddProductDialog(
                             top.linkTo(tfSparPrice.bottom)
                             bottom.linkTo(parent.bottom)
                         },
-                    onClick = { dataProvider.processDialogResult() },
+                    onClick = { dataProvider.processProductDialogResult() },
                     border = BorderStroke(
                         width = dimensionResource(id = R.dimen.border_thin),
                         color = MaterialTheme.colorScheme.onPrimary

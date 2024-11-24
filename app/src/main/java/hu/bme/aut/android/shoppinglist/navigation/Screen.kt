@@ -5,4 +5,5 @@ sealed class Screen(val route: String) {
     data object Register: Screen("register")
     data object Main: Screen("main")
     data object CreateList: Screen("create_list")
+    data object Contacts: Screen("contacts")
 }

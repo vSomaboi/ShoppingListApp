@@ -10,6 +10,12 @@ interface UserService {
 
     suspend fun deleteUser(id: String)
 
+    suspend fun sendRequest(targetEmail: String) : Boolean
+
+    suspend fun addContact(contactEmail: String)
+
+    suspend fun removeContact(contactEmail: String)
+
     suspend fun saveOwnList(list: ShoppingList)
 
     suspend fun updateOwnList(list: ShoppingList)
