@@ -3,20 +3,22 @@ package hu.bme.aut.android.shoppinglist.domain.usecases.users
 import hu.bme.aut.android.shoppinglist.data.users.UserService
 
 class UserUseCases(
-    userService: UserService
-) {
-    val createUser = CreateUserUseCase(userService)
-    val updateUser = UpdateUserUseCase(userService)
-    val deleteUser = DeleteUserUseCase(userService)
-    val sendRequest = SendRequestUseCase(userService)
-    val saveOwnList = SaveOwnListUseCase(userService)
-    val updateOwnList = UpdateOwnListUseCase(userService)
-    val deleteOwnList = DeleteOwnListUseCase(userService)
-    val saveSharedList = SaveSharedListUseCase(userService)
-    val updateSharedList = UpdateSharedListUseCase(userService)
-    val deleteSharedList = DeleteSharedListUseCase(userService)
-    val getOwnListsOfUser = GetOwnListsOfUserUseCase(userService)
-    val getSharedListsOfUser = GetSharedListsOfUserUseCase(userService)
-    val addContact = AddContactUseCase(userService)
-    val removeContact = RemoveContactUseCase(userService)
-}
+    val createUser : CreateUserUseCase,
+    val updateUser : UpdateUserUseCase,
+    val deleteUser : DeleteUserUseCase,
+    val sendRequest : SendRequestUseCase,
+    val saveOwnList : SaveOwnListUseCase,
+    val updateOwnList : UpdateOwnListUseCase,
+    val deleteOwnList : DeleteOwnListUseCase,
+    val saveSharedList : SaveSharedListUseCase,
+    val updateSharedList : UpdateSharedListUseCase,
+    val deleteSharedList : DeleteSharedListUseCase,
+    val getOwnListsOfUser : GetOwnListsOfUserUseCase,
+    val getSharedListsOfUser : GetSharedListsOfUserUseCase,
+    val addContact : AddContactUseCase,
+    val removeContact : RemoveContactUseCase,
+    val getRequests : GetRequestsOfCurrentUserUseCase,
+    val getContacts : GetContactsOfCurrentUserUseCase,
+    val declineRequest : DeclineRequestUseCase,
+    val shareList: ShareListUseCase
+)

@@ -36,6 +36,8 @@
     <string name="text_above_list">Items on the list:</string>
     <string name="add_item_content_description">Add new item</string>
     <string name="create_button_text">Create list</string>
+    <string name="update_button_text">Update list</string>
+    <string name="successful_update_message">List updated successfully</string>
     <!--ProductSelectionDialog-->
     <string name="searchbar_label">Search for products here</string>
     <string name="unexpected_error_message">An unexpected error occurred, please try refreshing the list of products, then retry the operation.</string>
@@ -56,4 +58,15 @@
     <!--ContactsScreen-->
     <string name="add_contact_button_text">Add new contact</string>
     <string name="contact_remove_success">Contact removed successfully</string>
+    <!--NotificationsScreen-->
+    <string name="accept_button_text">Accept</string>
+    <string name="decline_button_text">Decline</string>
+    <string name="notification_explaining_text">wants to connect with you:</string>
+    <string name="accept_success_message">Contact added successfully</string>
+    <string name="decline_success_message">Request declined successful</string>
+    <!--InformationScreen-->
+    <string name="searchbar_placeholder_text">Type product name here</string>
+    <!--ShareDialog-->
+    <string name="info_text">Click on the list you would like to share</string>
+    <string name="successful_share_message">List shared successfully</string>
 </resources>

@@ -5,11 +5,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.feature.authentication.login.LoginScreen
 import hu.bme.aut.android.shoppinglist.feature.authentication.register.RegisterScreen
 import hu.bme.aut.android.shoppinglist.feature.contacts.ContactsScreen
 import hu.bme.aut.android.shoppinglist.feature.createshoppinglist.CreateShoppingListScreen
 import hu.bme.aut.android.shoppinglist.feature.main.MainScreen
+import hu.bme.aut.android.shoppinglist.feature.notifications.NotificationsScreen
 
 @Composable
 fun NavGraph(
@@ -53,14 +55,28 @@ fun NavGraph(
                     navController.navigate(
                         route = Screen.Contacts.route
                     )
+                },
+                notificationsButtonClicked = {
+                    navController.navigate(
+                        route = Screen.Notifications.route
+                    )
                 }
             )
         }
         composable(Screen.CreateList.route){
-            CreateShoppingListScreen()
+            CreateShoppingListScreen(
+                onCreationSuccess = {
+                    navController.navigate(
+                        Screen.Main.route
+                    )
+                }
+            )
         }
         composable(Screen.Contacts.route) {
             ContactsScreen()
+        }
+        composable(Screen.Notifications.route) {
+            NotificationsScreen()
         }
     }
 }

@@ -1,5 +1,6 @@
 package hu.bme.aut.android.shoppinglist.feature.main
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -41,8 +42,10 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hu.bme.aut.android.shoppinglist.R
-import hu.bme.aut.android.shoppinglist.ui.common.AddContactDialog
+import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.ui.common.AddProductDialog
+import hu.bme.aut.android.shoppinglist.ui.common.ModifyListDialog
+import hu.bme.aut.android.shoppinglist.ui.common.ProductSelectionDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ShoppingListLoadingScreen
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 
@@ -72,11 +75,27 @@ fun MainScreen(
         }
     }
 
+    LaunchedEffect(key1 = null) {
+        viewModel.onEvent(MainEvent.LoadLists)
+    }
+
     if(state.isProductDialogOpen){
         AddProductDialog(
             onDismissRequest = { viewModel.onEvent(MainEvent.AddProductDialogDismissed) },
             dataProvider = viewModel
         )
+    }
+
+    if(state.isModifyDialogOpen){
+        ModifyListDialog(
+            onDismissRequest = { viewModel.onEvent(MainEvent.ModifyDialogDismissed) },
+            dataProvider = viewModel)
+    }
+
+    if(state.isSelectionDialogOpened){
+        ProductSelectionDialog(
+            onDismissRequest = { viewModel.onEvent(MainEvent.SelectionDialogDismissed) },
+            dataProvider = viewModel)
     }
 
     Scaffold(
@@ -170,10 +189,6 @@ fun MainScreen(
                     ) {
                         items(state.ownLists, key = { list -> list.firebaseId }){ list ->
                             ListItem(
-                                modifier = Modifier
-                                    .clickable {
-                                           viewModel.onEvent(MainEvent.ListClicked(list))
-                                    },
                                 headlineContent = {
                                     Row(
                                         modifier = Modifier
@@ -187,7 +202,9 @@ fun MainScreen(
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         IconButton(
-                                            onClick = { viewModel.onEvent(MainEvent.ModifyOwnClicked(list)) }
+                                            onClick = {
+                                                viewModel.onEvent(MainEvent.ModifyDialogOpened(list))
+                                            }
                                         ) {
                                             Icon(
                                                 painter = painterResource(id = R.drawable.ic_edit),

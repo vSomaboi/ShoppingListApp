@@ -138,7 +138,10 @@ fun ProductSelectionDialog(
                                             colors = ButtonDefaults.buttonColors(
                                                 containerColor = MaterialTheme.colorScheme.secondary
                                             ),
-                                            onClick = { dataProvider.processSelectionResult(product) }
+                                            onClick = {
+                                                dataProvider.processSelectionResult(product)
+                                                onDismissRequest()
+                                            }
                                         ) {
                                             Text(
                                                 text = stringResource(id = R.string.add_button_text),

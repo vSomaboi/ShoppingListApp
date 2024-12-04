@@ -2,15 +2,18 @@ package hu.bme.aut.android.shoppinglist.data.users
 
 import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.domain.model.User
+import kotlinx.coroutines.flow.Flow
 
 interface UserService {
+    suspend fun getRequestsOfCurrentUser(): List<String>
+    suspend fun getContactsOfCurrentUser(): List<String>
     suspend fun createUser()
-
     suspend fun updateUser(user: User)
 
     suspend fun deleteUser(id: String)
 
     suspend fun sendRequest(targetEmail: String) : Boolean
+    suspend fun declineRequest(senderEmail: String)
 
     suspend fun addContact(contactEmail: String)
 
@@ -31,4 +34,6 @@ interface UserService {
     suspend fun getOwnListsOfUser() : List<ShoppingList>
 
     suspend fun getSharedListsOfUser() : List<ShoppingList>
+
+    suspend fun shareListWithContact(contactEmail: String, list: ShoppingList)
 }

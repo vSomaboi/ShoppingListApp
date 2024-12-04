@@ -24,6 +24,26 @@ class FirebaseUserService @Inject constructor() : UserService {
     private val currentUser = firebaseAuth.currentUser
     private val currentUserId = currentUser?.uid
 
+
+
+    override suspend fun getRequestsOfCurrentUser(): List<String> {
+        return fireStore.collection(USER_COLLECTION)
+            .document(currentUserId!!)
+            .get()
+            .await()
+            .toObject<FirebaseUser>()
+            ?.requests ?: emptyList()
+    }
+
+    override suspend fun getContactsOfCurrentUser(): List<String> {
+        return fireStore.collection(USER_COLLECTION)
+            .document(currentUserId!!)
+            .get()
+            .await()
+            .toObject<FirebaseUser>()
+            ?.contacts ?: emptyList()
+    }
+
     override suspend fun createUser() {
         val newUser = User(
             id = currentUserId!!,
@@ -57,10 +77,18 @@ class FirebaseUserService @Inject constructor() : UserService {
         }
     }
 
+    override suspend fun declineRequest(senderEmail: String) {
+        fireStore.collection(USER_COLLECTION)
+            .document(currentUserId!!)
+            .update("requests", FieldValue.arrayRemove(senderEmail))
+            .await()
+    }
+
     override suspend fun addContact(contactEmail: String) {
         fireStore.collection(USER_COLLECTION)
             .document(currentUserId!!)
-            .update("contacts", FieldValue.arrayUnion(contactEmail))
+            .update("contacts", FieldValue.arrayUnion(contactEmail),
+                "requests", FieldValue.arrayRemove(contactEmail))
             .await()
 
         val contact = fireStore.collection(USER_COLLECTION)
@@ -102,13 +130,18 @@ class FirebaseUserService @Inject constructor() : UserService {
 
     override suspend fun saveOwnList(list: ShoppingList) {
         fireStore.collection(USER_COLLECTION).document(currentUserId!!)
-            .collection(USER_SHOPPING_LIST_COLLECTION).add(list.asFirebaseShoppingList()).await()
+            .collection(USER_SHOPPING_LIST_COLLECTION)
+            .add(
+                list.asFirebaseShoppingList().copy(
+                    ownerId = currentUserId
+                )
+            ).await()
     }
 
     override suspend fun updateOwnList(list: ShoppingList) {
         fireStore.collection(USER_COLLECTION).document(currentUserId!!)
             .collection(USER_SHOPPING_LIST_COLLECTION).document(list.firebaseId)
-            .set(list.asFirebaseShoppingList(), SetOptions.merge()).await()
+            .set(list.asFirebaseShoppingList(), SetOptions.mergeFields("items", "name")).await()
     }
 
     override suspend fun deleteOwnList(listId: String) {
@@ -173,6 +206,19 @@ class FirebaseUserService @Inject constructor() : UserService {
             )
         }
         return result
+    }
+
+    override suspend fun shareListWithContact(contactEmail: String, list: ShoppingList) {
+        val contactId = fireStore.collection(USER_COLLECTION)
+            .whereEqualTo("email", contactEmail)
+            .get()
+            .await()
+            .toObjects<FirebaseUser>()
+            .first()
+            .id
+        fireStore.collection(USER_COLLECTION).document(contactId)
+            .update("sharedLists", FieldValue.arrayUnion(mapOf(Pair(currentUserId, list.firebaseId))))
+            .await()
     }
 
     companion object{

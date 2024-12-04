@@ -3,7 +3,6 @@ package hu.bme.aut.android.shoppinglist.feature.contacts
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +35,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -44,7 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hu.bme.aut.android.shoppinglist.R
 import hu.bme.aut.android.shoppinglist.ui.common.AddContactDialog
-import hu.bme.aut.android.shoppinglist.ui.theme.ShoppingListTheme
+import hu.bme.aut.android.shoppinglist.ui.common.ShareDialog
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 import hu.bme.aut.android.shoppinglist.util.iconMinSize
 
@@ -70,10 +68,21 @@ fun ContactsScreen(
         }
     }
 
+    LaunchedEffect(key1 = null) {
+        viewModel.onEvent(ContactEvent.LoadContacts)
+    }
+
     if(state.isContactDialogOpen){
         AddContactDialog(
             onDismissRequest = { viewModel.onEvent(ContactEvent.AddContactDialogDismissed) },
             dataProvider = viewModel)
+    }
+
+    if(state.isShareDialogOpen){
+        ShareDialog(
+            onDismissRequest = { viewModel.onEvent(ContactEvent.ShareDialogDismissed) },
+            dataProvider = viewModel
+        )
     }
 
     Scaffold(
@@ -184,6 +193,25 @@ fun ContactsScreen(
                                     IconButton(
                                         onClick = {
                                             viewModel.onEvent(
+                                                ContactEvent.ShareDialogOpened(contact)
+                                            )
+                                        },
+                                        colors = IconButtonDefaults.iconButtonColors(
+                                            contentColor = if(isPressed){
+                                                MaterialTheme.colorScheme.primary
+                                            }else{
+                                                MaterialTheme.colorScheme.onTertiary
+                                            }
+                                        )
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_share),
+                                            contentDescription = null
+                                        )
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            viewModel.onEvent(
                                                 ContactEvent.ContactRemoved(contact)
                                             )
                                         },
@@ -219,14 +247,3 @@ fun ContactsScreen(
         }
     )
 }
-
-/*
-@Composable
-@Preview
-fun ContactsPreView(){
-    ShoppingListTheme {
-        ContactsScreen(
-            viewModel = ContactsViewModel()
-        )
-    }
-}*/

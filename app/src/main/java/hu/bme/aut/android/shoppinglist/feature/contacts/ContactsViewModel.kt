@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.bme.aut.android.shoppinglist.R
+import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.domain.usecases.users.UserUseCases
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 import hu.bme.aut.android.shoppinglist.util.IAddContactDialogUser
+import hu.bme.aut.android.shoppinglist.util.IShareDialogUser
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactsViewModel @Inject constructor(
     private val userOperations: UserUseCases
-) : ViewModel(), IAddContactDialogUser {
+) : ViewModel(), IAddContactDialogUser, IShareDialogUser {
 
     private val _state = MutableStateFlow(ContactsState())
     val state: StateFlow<ContactsState> = _state
@@ -37,6 +39,20 @@ class ContactsViewModel @Inject constructor(
 
     fun onEvent(event: ContactEvent){
         when(event){
+            is ContactEvent.LoadContacts -> {
+                viewModelScope.launch {
+                    try{
+                        val contacts =  userOperations.getContacts.invoke().getOrThrow()
+                        _state.update {
+                            it.copy(
+                                contactList = contacts
+                            )
+                        }
+                    }catch (e: Exception){
+                        _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
+                    }
+                }
+            }
             is ContactEvent.AddContactDialogOpened -> {
                 _state.update {
                     it.copy(isContactDialogOpen = true)
@@ -61,6 +77,21 @@ class ContactsViewModel @Inject constructor(
                     }catch (e: Exception){
                         _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
                     }
+                }
+            }
+            is ContactEvent.ShareDialogOpened -> {
+                _state.update {
+                    it.copy(
+                        selectedContact = event.selectedContact,
+                        isShareDialogOpen = true
+                    )
+                }
+            }
+            is ContactEvent.ShareDialogDismissed -> {
+                _state.update {
+                    it.copy(
+                        isShareDialogOpen = false
+                    )
                 }
             }
         }
@@ -93,19 +124,59 @@ class ContactsViewModel @Inject constructor(
             }
         }
     }
+
+    override fun getShoppingLists(): List<ShoppingList> {
+        viewModelScope.launch {
+            try{
+                _state.update {
+                    it.copy(
+                        shoppingLists = userOperations.getOwnListsOfUser.invoke().getOrThrow()
+                    )
+                }
+            }catch (e: Exception){
+                _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
+            }
+        }
+        return _state.value.shoppingLists
+    }
+
+    override fun listSelected(list: ShoppingList) {
+        viewModelScope.launch {
+            try{
+                userOperations.shareList.invoke(
+                    _state.value.selectedContact,
+                    list
+                )
+                _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.successful_share_message)))
+                _state.update {
+                    it.copy(
+                        isShareDialogOpen = false
+                    )
+                }
+            }catch (e: Exception){
+                _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
+            }
+        }
+    }
 }
 
 data class ContactsState(
     val isLoading: Boolean = true,
-    val contactList: List<String> = listOf(
-        "contactemail@gmail.com"
-    ),
+    //ContactDialog Data
+    val contactList: List<String> = emptyList(),
     val isContactDialogOpen: Boolean = false,
     val contactEmail: String = "",
+    //ShareDialog Data
+    val isShareDialogOpen: Boolean = false,
+    val shoppingLists: List<ShoppingList> = emptyList(),
+    val selectedContact: String = ""
 )
 
 sealed class ContactEvent{
+    data object LoadContacts: ContactEvent()
     data object AddContactDialogOpened: ContactEvent()
     data object AddContactDialogDismissed: ContactEvent()
     data class ContactRemoved(val contact: String): ContactEvent()
+    data class ShareDialogOpened(val selectedContact: String): ContactEvent()
+    data object ShareDialogDismissed: ContactEvent()
 }

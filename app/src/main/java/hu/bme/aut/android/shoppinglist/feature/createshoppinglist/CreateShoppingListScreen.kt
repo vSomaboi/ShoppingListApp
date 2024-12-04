@@ -40,20 +40,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hu.bme.aut.android.shoppinglist.R
+import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.ui.common.ProductSelectionDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ShoppingListLoadingScreen
-import hu.bme.aut.android.shoppinglist.ui.theme.ShoppingListTheme
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 
 @Composable
 fun CreateShoppingListScreen(
-    viewModel: CreateShoppingListViewModel = hiltViewModel()
+    viewModel: CreateShoppingListViewModel = hiltViewModel(),
+    onCreationSuccess: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -64,7 +64,7 @@ fun CreateShoppingListScreen(
         viewModel.uiEvent.collect{uiEvent ->
             when(uiEvent){
                 is UiEvent.Success -> {
-
+                    onCreationSuccess()
                 }
                 is UiEvent.Notification -> {
                     Toast.makeText(context, uiEvent.message.asString(context), Toast.LENGTH_LONG).show()
@@ -281,13 +281,4 @@ fun CreateShoppingListScreen(
             }
         }
     )
-}
-
-@Composable
-@Preview
-fun CreateShoppingListPreview(){
-    val viewModel = CreateShoppingListViewModel()
-    ShoppingListTheme {
-        CreateShoppingListScreen(viewModel)
-    }
 }

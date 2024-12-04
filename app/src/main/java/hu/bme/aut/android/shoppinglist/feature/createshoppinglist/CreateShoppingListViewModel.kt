@@ -1,13 +1,13 @@
 package hu.bme.aut.android.shoppinglist.feature.createshoppinglist
 
-
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.bme.aut.android.shoppinglist.R
 import hu.bme.aut.android.shoppinglist.domain.model.Product
+import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.domain.usecases.products.ProductUseCases
+import hu.bme.aut.android.shoppinglist.domain.usecases.users.UserUseCases
 import hu.bme.aut.android.shoppinglist.ui.model.ProductUi
 import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.model.asProduct
@@ -25,7 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateShoppingListViewModel @Inject constructor(
-    //private val productOperations: ProductUseCases
+    private val productOperations: ProductUseCases,
+    private val userOperations: UserUseCases
 ) : ViewModel(), ISelectionDialogUser {
     private val _state = MutableStateFlow(CreateShoppingListState())
     val state : StateFlow<CreateShoppingListState> = _state
@@ -61,9 +62,9 @@ class CreateShoppingListViewModel @Inject constructor(
             is CreateShoppingListEvent.DeleteListItem -> {
                 val deletedItem = event.item
                 _state.update {
-                    it.apply {
-                        items.remove(deletedItem)
-                    }
+                    it.copy(
+                        items = it.items.minus(deletedItem).toMutableList()
+                    )
                 }
 
             }
@@ -75,6 +76,19 @@ class CreateShoppingListViewModel @Inject constructor(
                 }
             }
             is CreateShoppingListEvent.CreateButtonClicked -> {
+                viewModelScope.launch {
+                    try {
+                        userOperations.saveOwnList.invoke(
+                            ShoppingList(
+                                name = _state.value.listName,
+                                items = _state.value.items.toList()
+                            )
+                        )
+                        _uiEvent.send(UiEvent.Success)
+                    }catch (e: Exception){
+                        _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
+                    }
+                }
 
             }
             is CreateShoppingListEvent.DialogDismissed -> {
@@ -168,10 +182,10 @@ class CreateShoppingListViewModel @Inject constructor(
     override fun processSelectionResult(selectedItem: ProductUi) {
         if(selectedItem.selectedAmountWholePart > 0 || selectedItem.selectedAmountFractionPart > 0){
             _state.update {
-                it.apply {
-                    items.add(selectedItem.asProduct())
+                it.copy(
+                    items = it.items.plus(selectedItem.asProduct()).toMutableList(),
                     isDialogOpened = false
-                }
+                )
             }
         }else{
             viewModelScope.launch {
@@ -191,14 +205,14 @@ class CreateShoppingListViewModel @Inject constructor(
                 dialogSearchBarInput = input
             )
         }
-        /*if(state.value.dialogSearchBarInput.trim().length >= 3){
+        if(state.value.dialogSearchBarInput.trim().length >= 3){
             viewModelScope.launch {
                 try{
                     _state.update {
                         it.copy(
-                            dialogItems = productOperations.getProductsNamedAsUseCase
+                            dialogItems = productOperations.getProductsNamedAs
                                 .invoke(state.value.dialogSearchBarInput.trim())
-                                .getOrThrow().map { product ->  product.asProductUi() }.toMutableList()
+                                .getOrThrow().map { product -> product.asProductUi() }
                         )
                     }
 
@@ -206,7 +220,7 @@ class CreateShoppingListViewModel @Inject constructor(
                     _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
                 }
             }
-        }*/
+        }
     }
 }
 
@@ -215,16 +229,8 @@ data class CreateShoppingListState(
     val items: MutableList<Product> = mutableListOf(),
     var isDialogOpened: Boolean = false,
     val dialogSearchBarInput: String = "",
-    var dialogItems: List<ProductUi> =listOf(
-        ProductUi(
-            id = "1",
-            name = "teszt",
-            selectedAmountWholePart = 0,
-            selectedAmountFractionPart = 0
-        )
-    ),
-    val isLoading: Boolean = true,
-    val error: Throwable? = null
+    var dialogItems: List<ProductUi> = emptyList(),
+    val isLoading: Boolean = true
 )
 
 sealed class CreateShoppingListEvent{
