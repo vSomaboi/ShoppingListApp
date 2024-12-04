@@ -1,6 +1,5 @@
 package hu.bme.aut.android.shoppinglist.feature.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
@@ -8,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import hu.bme.aut.android.shoppinglist.R
 import hu.bme.aut.android.shoppinglist.domain.model.PriceAtTimePoint
 import hu.bme.aut.android.shoppinglist.domain.model.Product
+import hu.bme.aut.android.shoppinglist.domain.model.SharedListReference
 import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.domain.usecases.products.ProductUseCases
 import hu.bme.aut.android.shoppinglist.domain.usecases.users.UserUseCases
@@ -81,7 +81,6 @@ class MainViewModel @Inject constructor(
                                 isLoading = false
                             )
                         }
-                        Log.d("LOADING_ERROR", e.message.toString())
                         _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
                     }
                 }
@@ -116,6 +115,42 @@ class MainViewModel @Inject constructor(
                             isModifyDialogOpen = true,
                             isUpdatingSharedList = event.isSharedList
                         )
+                    }
+                }
+            }
+            is MainEvent.DeleteOwnList -> {
+                viewModelScope.launch {
+                    try{
+                        userOperations.deleteOwnList.invoke(event.list.firebaseId)
+                        _state.update {
+                            it.copy(
+                                ownLists = it.ownLists.minus(event.list)
+                            )
+                        }
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.delete_success_message)))
+                    }catch (e: Exception){
+                        _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
+                    }
+                }
+            }
+            is MainEvent.DeleteSharedList -> {
+                val deletedList = event.list
+                viewModelScope.launch {
+                    try{
+                        userOperations.deleteSharedList.invoke(
+                            SharedListReference(
+                                deletedList.ownerFirebaseId,
+                                deletedList.firebaseId
+                            )
+                        )
+                        _state.update {
+                            it.copy(
+                                sharedLists = it.sharedLists.minus(deletedList)
+                            )
+                        }
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.delete_success_message)))
+                    }catch (e: Exception){
+                        _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
                     }
                 }
             }
@@ -509,6 +544,8 @@ sealed class MainEvent{
     data object AddProductDialogOpened: MainEvent()
     data object AddProductDialogDismissed: MainEvent()
     data class ModifyDialogOpened(val initialShoppingList: ShoppingList, val isSharedList: Boolean): MainEvent()
+    data class DeleteOwnList(val list: ShoppingList): MainEvent()
+    data class DeleteSharedList(val list: ShoppingList): MainEvent()
     data object ModifyDialogDismissed: MainEvent()
     data object SelectionDialogOpened: MainEvent()
     data object SelectionDialogDismissed: MainEvent()

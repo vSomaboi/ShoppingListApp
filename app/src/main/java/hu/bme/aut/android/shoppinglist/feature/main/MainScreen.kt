@@ -142,7 +142,7 @@ fun MainScreen(
                         .fillMaxSize()
                         .background(color = MaterialTheme.colorScheme.background)
                 ) {
-                    val (tOwnLists, ownList, btnCreateList, tSharedLists, sharedList) = createRefs()
+                    val (tOwnLists, ownList, btnCreateList, tSharedLists, sharedList, btnGetInfo) = createRefs()
 
                     val glBottomOfContent = createGuidelineFromBottom(0.1f)
                     val glStartOfContent = createGuidelineFromStart(0.1f)
@@ -205,6 +205,17 @@ fun MainScreen(
                                         ) {
                                             Icon(
                                                 painter = painterResource(id = R.drawable.ic_edit),
+                                                contentDescription = stringResource(id = R.string.edit_button_content_description),
+                                                tint = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                        IconButton(
+                                            onClick = {
+                                                viewModel.onEvent(MainEvent.DeleteOwnList(list))
+                                            }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.ic_delete),
                                                 contentDescription = stringResource(id = R.string.edit_button_content_description),
                                                 tint = MaterialTheme.colorScheme.onSurface
                                             )
@@ -306,6 +317,17 @@ fun MainScreen(
                                                 tint = MaterialTheme.colorScheme.onSurface
                                             )
                                         }
+                                        IconButton(
+                                            onClick = {
+                                                viewModel.onEvent(MainEvent.DeleteSharedList(list))
+                                            }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.ic_delete),
+                                                contentDescription = stringResource(id = R.string.edit_button_content_description),
+                                                tint = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
                                     }
                                 },
                                 supportingContent = {
@@ -317,6 +339,41 @@ fun MainScreen(
                             )
 
                         }
+                    }
+                    Button(
+                        modifier = Modifier
+                            .constrainAs(btnGetInfo){
+                                start.linkTo(parent.start)
+                                end.linkTo(parent.end)
+                                top.linkTo(glBottomOfContent)
+                                bottom.linkTo(parent.bottom)
+                            },
+                        onClick = { /*TODO*/ },
+                        border = BorderStroke(
+                            width = dimensionResource(id = R.dimen.border_thin),
+                            color = if(isPressed){
+                                MaterialTheme.colorScheme.onPrimary
+                            }else{
+                                MaterialTheme.colorScheme.onSecondary
+                            }
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if(isPressed){
+                                MaterialTheme.colorScheme.primary
+                            }else{
+                                MaterialTheme.colorScheme.secondary
+                            },
+                            contentColor = if(isPressed){
+                                MaterialTheme.colorScheme.onPrimary
+                            }else{
+                                MaterialTheme.colorScheme.onSecondary
+                            }
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.info_screen_navigate_button_text),
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
                 }
             }

@@ -3,6 +3,7 @@ package hu.bme.aut.android.shoppinglist.data.products.firebase
 import com.google.firebase.firestore.DocumentId
 import hu.bme.aut.android.shoppinglist.domain.model.PriceAtTimePoint
 import hu.bme.aut.android.shoppinglist.domain.model.Product
+import hu.bme.aut.android.shoppinglist.util.upperFirst
 
 data class FirebaseProduct(
     @DocumentId val id: String = "",
@@ -14,7 +15,7 @@ data class FirebaseProduct(
 
 fun FirebaseProduct.asProduct(): Product = Product(
     id = id,
-    name = name,
+    name = name.upperFirst(),
     lidlPrices = lidlPrices,
     tescoPrices = tescoPrices,
     sparPrices = sparPrices
@@ -22,7 +23,7 @@ fun FirebaseProduct.asProduct(): Product = Product(
 
 fun Product.asFirebaseProduct() : FirebaseProduct = FirebaseProduct(
     id = id,
-    name = name,
+    name = name.uppercase(),
     lidlPrices = lidlPrices,
     tescoPrices = tescoPrices,
     sparPrices = sparPrices

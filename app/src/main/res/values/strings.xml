@@ -31,6 +31,11 @@
     <string name="notifications_button_content_description">View notifications</string>
     <string name="create_new_list_button_text">Create new list</string>
     <string name="new_contact_button_content_description">Add new contact</string>
+    <string name="delete_success_message">List deleted successfully</string>
+    <string name="info_screen_navigate_button_text">Get information</string>
+    <string name="blank_list_name_error">The list name must not be empty</string>
+    <string name="empty_list_error">The list must contain at least 1 item</string>
+    <string name="list_creation_success">List created successfully</string>
     <!--CreateScreen-->
     <string name="list_name_supporting_text">List name</string>
     <string name="text_above_list">Items on the list:</string>

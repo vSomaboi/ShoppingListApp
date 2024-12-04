@@ -3,6 +3,7 @@ package hu.bme.aut.android.shoppinglist.ui.model
 import hu.bme.aut.android.shoppinglist.domain.model.PriceAtTimePoint
 import hu.bme.aut.android.shoppinglist.domain.model.Product
 import hu.bme.aut.android.shoppinglist.util.upperFirst
+import kotlin.math.pow
 
 data class ProductUi(
     val id: String = "",
@@ -16,11 +17,13 @@ data class ProductUi(
 
 fun ProductUi.asProduct(): Product = Product(
     id= id,
-    name = name.uppercase(),
+    name = name.upperFirst(),
     lidlPrices = lidlPrices,
     tescoPrices = tescoPrices,
     sparPrices = sparPrices,
-    selectedAmount = selectedAmountWholePart + selectedAmountFractionPart.toFloat()/100
+    selectedAmount = selectedAmountWholePart +
+            selectedAmountFractionPart.toFloat()/
+            10f.pow(selectedAmountFractionPart.toString().length)
 )
 
 fun Product.asProductUi(): ProductUi = ProductUi(

@@ -48,6 +48,7 @@ import hu.bme.aut.android.shoppinglist.R
 import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.ui.common.ProductSelectionDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ShoppingListLoadingScreen
+import hu.bme.aut.android.shoppinglist.ui.model.UiText
 import hu.bme.aut.android.shoppinglist.ui.util.UiEvent
 
 @Composable
@@ -59,11 +60,13 @@ fun CreateShoppingListScreen(
     val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
+    val creationSuccessMessage = stringResource(id = R.string.list_creation_success)
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect{uiEvent ->
             when(uiEvent){
                 is UiEvent.Success -> {
+                    Toast.makeText(context, creationSuccessMessage, Toast.LENGTH_LONG).show()
                     onCreationSuccess()
                 }
                 is UiEvent.Notification -> {

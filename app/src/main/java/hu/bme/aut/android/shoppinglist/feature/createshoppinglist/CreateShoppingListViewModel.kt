@@ -77,16 +77,24 @@ class CreateShoppingListViewModel @Inject constructor(
             }
             is CreateShoppingListEvent.CreateButtonClicked -> {
                 viewModelScope.launch {
-                    try {
-                        userOperations.saveOwnList.invoke(
-                            ShoppingList(
-                                name = _state.value.listName,
-                                items = _state.value.items.toList()
+                    if(_state.value.listName.isBlank()){
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.blank_list_name_error)))
+                    }
+                    else if(_state.value.items.isEmpty()){
+                        _uiEvent.send(UiEvent.Notification(UiText.StringResource(R.string.empty_list_error)))
+                    }
+                    else{
+                        try {
+                            userOperations.saveOwnList.invoke(
+                                ShoppingList(
+                                    name = _state.value.listName,
+                                    items = _state.value.items.toList()
+                                )
                             )
-                        )
-                        _uiEvent.send(UiEvent.Success)
-                    }catch (e: Exception){
-                        _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
+                            _uiEvent.send(UiEvent.Success)
+                        }catch (e: Exception){
+                            _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
+                        }
                     }
                 }
 

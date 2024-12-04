@@ -251,6 +251,9 @@ fun RegisterScreen(
                                 painter = painterResource(id = R.drawable.ic_password_leading),
                                 contentDescription = null,
                                 modifier = Modifier
+                                    .clickable {
+                                        viewModel.onEvent(RegisterEvent.PasswordVisibilityChanged)
+                                    }
                                     .wrapContentSize(
                                         Alignment.CenterStart,
                                         unbounded = true
