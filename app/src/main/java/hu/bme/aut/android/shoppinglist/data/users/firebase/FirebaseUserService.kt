@@ -1,5 +1,6 @@
 package hu.bme.aut.android.shoppinglist.data.users.firebase
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,6 +11,7 @@ import hu.bme.aut.android.shoppinglist.data.shoppinglists.FirebaseShoppingList
 import hu.bme.aut.android.shoppinglist.data.shoppinglists.asFirebaseShoppingList
 import hu.bme.aut.android.shoppinglist.data.shoppinglists.asShoppingList
 import hu.bme.aut.android.shoppinglist.data.users.UserService
+import hu.bme.aut.android.shoppinglist.domain.model.SharedListReference
 import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.domain.model.User
 import kotlinx.coroutines.tasks.await
@@ -149,18 +151,19 @@ class FirebaseUserService @Inject constructor() : UserService {
             .collection(USER_SHOPPING_LIST_COLLECTION).document(listId).delete().await()
     }
 
-    override suspend fun saveSharedList(listRef: Map<String, String>) {
+    override suspend fun saveSharedList(listRef: SharedListReference) {
         fireStore.collection(USER_COLLECTION).document(currentUserId!!)
             .update("sharedLists", FieldValue.arrayUnion(listRef)).await()
     }
 
     override suspend fun updateSharedList(list: ShoppingList) {
+        Log.d("LIST_WE_TRY_TO_UPDATE", list.toString())
         fireStore.collection(USER_COLLECTION).document(list.ownerFirebaseId)
             .collection(USER_SHOPPING_LIST_COLLECTION).document(list.firebaseId)
-            .update("items", list.items).await()
+            .set(list.asFirebaseShoppingList(), SetOptions.mergeFields("items")).await()
     }
 
-    override suspend fun deleteSharedList(listRef: Map<String, String>) {
+    override suspend fun deleteSharedList(listRef: SharedListReference) {
         fireStore.collection(USER_COLLECTION).document(currentUserId!!)
             .update("sharedLists", FieldValue.arrayRemove(listRef)).await()
     }
@@ -197,11 +200,11 @@ class FirebaseUserService @Inject constructor() : UserService {
         
         currentUser.sharedLists.forEach { listRef ->
             result.add(
-                fireStore.collection(USER_COLLECTION).document(listRef.key)
-                    .collection(USER_SHOPPING_LIST_COLLECTION).document(listRef.value)
+                fireStore.collection(USER_COLLECTION).document(listRef.ownerId)
+                    .collection(USER_SHOPPING_LIST_COLLECTION).document(listRef.listId)
                     .get()
                     .await()
-                    .toObject(FirebaseShoppingList::class.java)
+                    .toObject<FirebaseShoppingList>()
                     !!.asShoppingList()
             )
         }
@@ -217,7 +220,7 @@ class FirebaseUserService @Inject constructor() : UserService {
             .first()
             .id
         fireStore.collection(USER_COLLECTION).document(contactId)
-            .update("sharedLists", FieldValue.arrayUnion(mapOf(Pair(currentUserId, list.firebaseId))))
+            .update("sharedLists", FieldValue.arrayUnion(SharedListReference(currentUserId!!, list.firebaseId)))
             .await()
     }
 

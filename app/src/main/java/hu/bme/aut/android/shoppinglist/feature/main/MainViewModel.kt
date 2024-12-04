@@ -81,12 +81,10 @@ class MainViewModel @Inject constructor(
                                 isLoading = false
                             )
                         }
+                        Log.d("LOADING_ERROR", e.message.toString())
                         _uiEvent.send(UiEvent.Notification(UiText.DynamicString(e.message ?: "Unknown error")))
                     }
                 }
-            }
-            is MainEvent.ModifySharedClicked -> {
-
             }
             is MainEvent.AddProductDialogOpened -> {
                 _state.update {
@@ -115,7 +113,8 @@ class MainViewModel @Inject constructor(
                             modifiedListOwnerId = initialState.ownerFirebaseId,
                             modifiedListName = initialState.name,
                             modifiedListItems = initialState.items,
-                            isModifyDialogOpen = true
+                            isModifyDialogOpen = true,
+                            isUpdatingSharedList = event.isSharedList
                         )
                     }
                 }
@@ -443,14 +442,30 @@ class MainViewModel @Inject constructor(
     override fun updateList() {
         viewModelScope.launch {
             try{
-                userOperations.updateOwnList.invoke(
-                    ShoppingList(
-                        firebaseId = _state.value.modifiedListId,
-                        ownerFirebaseId = _state.value.modifiedListOwnerId,
-                        name = _state.value.modifiedListName,
-                        items = _state.value.modifiedListItems
+                if(_state.value.isUpdatingSharedList){
+                    userOperations.updateSharedList.invoke(
+                        ShoppingList(
+                            firebaseId = _state.value.modifiedListId,
+                            ownerFirebaseId = _state.value.modifiedListOwnerId,
+                            name = _state.value.modifiedListName,
+                            items = _state.value.modifiedListItems
+                        )
                     )
-                )
+                    _state.update {
+                        it.copy(
+                            isUpdatingSharedList = false
+                        )
+                    }
+                }else{
+                    userOperations.updateOwnList.invoke(
+                        ShoppingList(
+                            firebaseId = _state.value.modifiedListId,
+                            ownerFirebaseId = _state.value.modifiedListOwnerId,
+                            name = _state.value.modifiedListName,
+                            items = _state.value.modifiedListItems
+                        )
+                    )
+                }
                 _state.update {
                     it.copy(
                         isModifyDialogOpen = false
@@ -485,15 +500,15 @@ data class MainState(
     val selectionDialogSearchBarInput: String = "",
     var selectionDialogItems: List<ProductUi> = emptyList(),
 
+    val isUpdatingSharedList: Boolean = false,
     val error: Throwable? = null
 )
 
 sealed class MainEvent{
     data object LoadLists: MainEvent()
-    data class ModifySharedClicked(val list: ShoppingList): MainEvent()
     data object AddProductDialogOpened: MainEvent()
     data object AddProductDialogDismissed: MainEvent()
-    data class ModifyDialogOpened(val initialShoppingList: ShoppingList): MainEvent()
+    data class ModifyDialogOpened(val initialShoppingList: ShoppingList, val isSharedList: Boolean): MainEvent()
     data object ModifyDialogDismissed: MainEvent()
     data object SelectionDialogOpened: MainEvent()
     data object SelectionDialogDismissed: MainEvent()

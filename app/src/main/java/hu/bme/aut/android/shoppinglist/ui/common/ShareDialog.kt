@@ -49,11 +49,18 @@ fun ShareDialog(
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .background(color = MaterialTheme.colorScheme.secondary),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = stringResource(id = R.string.info_text))
+                Text(
+                    modifier = Modifier
+                        .padding(dimensionResource(id = R.dimen.padding_l)),
+                    text = stringResource(id = R.string.info_text),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
             }
             LazyColumn(
                 modifier = Modifier

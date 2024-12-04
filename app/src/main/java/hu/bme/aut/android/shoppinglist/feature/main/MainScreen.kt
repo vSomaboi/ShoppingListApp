@@ -1,10 +1,8 @@
 package hu.bme.aut.android.shoppinglist.feature.main
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -42,7 +40,6 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import hu.bme.aut.android.shoppinglist.R
-import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.ui.common.AddProductDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ModifyListDialog
 import hu.bme.aut.android.shoppinglist.ui.common.ProductSelectionDialog
@@ -203,7 +200,7 @@ fun MainScreen(
                                         )
                                         IconButton(
                                             onClick = {
-                                                viewModel.onEvent(MainEvent.ModifyDialogOpened(list))
+                                                viewModel.onEvent(MainEvent.ModifyDialogOpened(list, false))
                                             }
                                         ) {
                                             Icon(
@@ -288,10 +285,6 @@ fun MainScreen(
                     ) {
                         items(state.sharedLists, key = { list -> list.firebaseId }){ list ->
                             ListItem(
-                                modifier = Modifier
-                                    .clickable {
-                                        viewModel.onEvent(MainEvent.ListClicked(list))
-                                    },
                                 headlineContent = {
                                     Row(
                                         modifier = Modifier
@@ -305,7 +298,7 @@ fun MainScreen(
                                             color = MaterialTheme.colorScheme.onSurface
                                         )
                                         IconButton(
-                                            onClick = { viewModel.onEvent(MainEvent.ModifySharedClicked(list)) }
+                                            onClick = { viewModel.onEvent(MainEvent.ModifyDialogOpened(list, true)) }
                                         ) {
                                             Icon(
                                                 painter = painterResource(id = R.drawable.ic_edit),

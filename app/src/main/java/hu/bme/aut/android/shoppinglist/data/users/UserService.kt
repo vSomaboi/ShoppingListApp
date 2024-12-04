@@ -1,8 +1,8 @@
 package hu.bme.aut.android.shoppinglist.data.users
 
+import hu.bme.aut.android.shoppinglist.domain.model.SharedListReference
 import hu.bme.aut.android.shoppinglist.domain.model.ShoppingList
 import hu.bme.aut.android.shoppinglist.domain.model.User
-import kotlinx.coroutines.flow.Flow
 
 interface UserService {
     suspend fun getRequestsOfCurrentUser(): List<String>
@@ -25,11 +25,11 @@ interface UserService {
 
     suspend fun deleteOwnList(listId: String)
 
-    suspend fun saveSharedList(listRef: Map<String, String>)
+    suspend fun saveSharedList(listRef: SharedListReference)
 
     suspend fun updateSharedList(list: ShoppingList)
 
-    suspend fun deleteSharedList(listRef: Map<String, String>)
+    suspend fun deleteSharedList(listRef: SharedListReference)
 
     suspend fun getOwnListsOfUser() : List<ShoppingList>
 
