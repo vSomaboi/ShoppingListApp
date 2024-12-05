@@ -20,6 +20,7 @@ mockitoCore = "3.11.0"
 mockitoInline = "3.2.0"
 mockitoKotlin = "3.2.0"
 hiltAndroidTesting = "2.51.1"
+vico = "2.0.0-beta.3"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -51,6 +52,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+vico-compose = { group = "com.patrykandpatrick.vico", name = "compose", version.ref = "vico" }
+vico-compose-m3 = { group = "com.patrykandpatrick.vico", name = "compose-m3", version.ref = "vico" }
 
 
 [plugins]

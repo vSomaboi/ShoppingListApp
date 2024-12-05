@@ -71,6 +71,12 @@
     <string name="decline_success_message">Request declined successful</string>
     <!--InformationScreen-->
     <string name="searchbar_placeholder_text">Type product name here</string>
+    <string name="info_providing_success_message">Info provided successfully</string>
+    <string name="info_screen_title">Information center</string>
+    <string name="contribute_input_field_label">Provide info</string>
+    <string name="contribute_button_text">Contribute</string>
+    <string name="contribution_appreciation">Thank you for your support!</string>
+    <string name="estimated_waiting_time_info_text">Queuing time is likely:</string>
     <!--ShareDialog-->
     <string name="info_text">Click on the list you would like to share</string>
     <string name="successful_share_message">List shared successfully</string>

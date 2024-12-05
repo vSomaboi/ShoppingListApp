@@ -53,7 +53,8 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     notificationsButtonClicked: () -> Unit = {},
     contactsButtonClicked: () -> Unit = {},
-    createButtonClicked: () -> Unit = { viewModel.onEvent(MainEvent.AddProductDialogOpened)}
+    createButtonClicked: () -> Unit = { viewModel.onEvent(MainEvent.AddProductDialogOpened)}, //Initialized here for testing purposes
+    infoButtonClicked: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -356,7 +357,7 @@ fun MainScreen(
                                 top.linkTo(glBottomOfContent)
                                 bottom.linkTo(parent.bottom)
                             },
-                        onClick = { /*TODO*/ },
+                        onClick = { infoButtonClicked() },
                         border = BorderStroke(
                             width = dimensionResource(id = R.dimen.border_thin),
                             color = if(isPressed){

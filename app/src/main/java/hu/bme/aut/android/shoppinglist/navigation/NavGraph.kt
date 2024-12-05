@@ -10,6 +10,7 @@ import hu.bme.aut.android.shoppinglist.feature.authentication.login.LoginScreen
 import hu.bme.aut.android.shoppinglist.feature.authentication.register.RegisterScreen
 import hu.bme.aut.android.shoppinglist.feature.contacts.ContactsScreen
 import hu.bme.aut.android.shoppinglist.feature.createshoppinglist.CreateShoppingListScreen
+import hu.bme.aut.android.shoppinglist.feature.info.InformationScreen
 import hu.bme.aut.android.shoppinglist.feature.main.MainScreen
 import hu.bme.aut.android.shoppinglist.feature.notifications.NotificationsScreen
 
@@ -60,6 +61,11 @@ fun NavGraph(
                     navController.navigate(
                         route = Screen.Notifications.route
                     )
+                },
+                infoButtonClicked = {
+                    navController.navigate(
+                        route = Screen.Information.route
+                    )
                 }
             )
         }
@@ -77,6 +83,9 @@ fun NavGraph(
         }
         composable(Screen.Notifications.route) {
             NotificationsScreen()
+        }
+        composable(Screen.Information.route) {
+            InformationScreen()
         }
     }
 }

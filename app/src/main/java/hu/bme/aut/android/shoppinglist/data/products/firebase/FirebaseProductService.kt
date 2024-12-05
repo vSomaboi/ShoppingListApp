@@ -1,6 +1,5 @@
 package hu.bme.aut.android.shoppinglist.data.products.firebase
 
-import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -95,8 +94,15 @@ class FirebaseProductService @Inject constructor() : ProductService {
             .first()
     }
 
-    override suspend fun providePriceInfo(product: Product, priceInfo: Pair<String, Int>) {
-        fireStore.collection(PRODUCT_COLLECTION).document(product.id)
+    override suspend fun providePriceInfo(productName: String, priceInfo: Pair<String, Int>) : Boolean {
+        val productId = fireStore.collection(PRODUCT_COLLECTION)
+            .whereEqualTo("name", productName.uppercase())
+            .get()
+            .await()
+            .toObjects<FirebaseProduct>()
+            .first().id
+
+        fireStore.collection(PRODUCT_COLLECTION).document(productId)
             .update("${priceInfo.first.lowercase()}Prices", FieldValue.arrayUnion(
                     PriceAtTimePoint(
                         price = priceInfo.second,
@@ -105,6 +111,7 @@ class FirebaseProductService @Inject constructor() : ProductService {
                 )
             )
             .await()
+        return productId.isNotEmpty()
     }
 
     companion object{

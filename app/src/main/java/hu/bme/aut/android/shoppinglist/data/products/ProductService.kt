@@ -17,5 +17,5 @@ interface ProductService {
 
     suspend fun getProductWithExactName(exactName: String) : Product
 
-    suspend fun providePriceInfo(product: Product, priceInfo: Pair<String, Int>)
+    suspend fun providePriceInfo(productName: String, priceInfo: Pair<String, Int>) : Boolean
 }

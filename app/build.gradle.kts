@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "hu.bme.aut.android.shoppinglist"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "hu.bme.aut.android.shoppinglist"
@@ -98,6 +98,8 @@ dependencies {
     implementation(libs.androidx.paging.compose)
 
     //Charts
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
 
     //Unit Tests with Mockito
     testImplementation(libs.mockito.core)
