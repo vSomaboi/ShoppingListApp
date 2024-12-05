@@ -94,4 +94,9 @@ dependencies {
     implementation(libs.androidx.paging.compose)
 
     //Charts
+
+    //Tests with Mockito
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.mockito.kotlin)
 }

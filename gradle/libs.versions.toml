@@ -15,7 +15,9 @@ activityCompose = "1.9.2"
 composeBom = "2024.09.02"
 navigationCompose = "2.8.1"
 pagingRuntime = "3.3.2"
-ycharts = "2.1.0"
+mockitoCore = "3.11.0"
+mockitoInline = "3.2.0"
+mockitoKotlin = "3.2.0"
 
 [libraries]
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
@@ -41,7 +43,9 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-ycharts = { module = "co.yml:ycharts", version.ref = "ycharts" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 
 
 [plugins]

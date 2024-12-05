@@ -10,8 +10,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FirebaseShopService @Inject constructor() : ShopService {
-    private val fireStore: FirebaseFirestore = FirebaseFirestore.getInstance()
+class FirebaseShopService @Inject constructor(
+    private val fireStore: FirebaseFirestore
+) : ShopService {
     override suspend fun updateWaitingTime(shopName: String, value: Int) {
         val currentShopData = fireStore.collection(SHOP_COLLECTION)
             .document(shopName.uppercase())
