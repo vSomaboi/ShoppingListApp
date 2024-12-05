@@ -34,12 +34,7 @@ class SaveProductUseCaseTest {
             mockData.add(param)
         }
 
-        saveProductUseCase.invoke(
-            Product(
-                id = "newId",
-                name = "newProduct"
-            )
-        )
+        saveProductUseCase.invoke(Product(id = "newId", name = "newProduct"))
 
         assertEquals(mockData.size, 1)
     }

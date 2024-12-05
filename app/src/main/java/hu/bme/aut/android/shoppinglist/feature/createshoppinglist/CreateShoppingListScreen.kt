@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -79,7 +80,9 @@ fun CreateShoppingListScreen(
     if(state.isDialogOpened){
         ProductSelectionDialog(
             onDismissRequest = { viewModel.onEvent(CreateShoppingListEvent.DialogDismissed) },
-            dataProvider = viewModel
+            dataProvider = viewModel,
+            modifier = Modifier
+                .testTag("productSelectionDialog")
         )
     }
 
@@ -161,7 +164,9 @@ fun CreateShoppingListScreen(
                             onClick = { viewModel.onEvent(CreateShoppingListEvent.AddButtonClicked) },
                             colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onBackground
-                            )
+                            ),
+                            modifier = Modifier
+                                .testTag("productSelectionDialogIcon")
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_add),

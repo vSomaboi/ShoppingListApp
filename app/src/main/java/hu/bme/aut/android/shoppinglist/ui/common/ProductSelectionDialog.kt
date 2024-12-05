@@ -53,11 +53,12 @@ import hu.bme.aut.android.shoppinglist.util.selectedAmountInputFieldSize
 @Composable
 fun ProductSelectionDialog(
     onDismissRequest: () -> Unit,
-    dataProvider: ISelectionDialogUser
+    dataProvider: ISelectionDialogUser,
+    modifier: Modifier
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.7f)
                 .padding(dimensionResource(id = R.dimen.padding_m)),

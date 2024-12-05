@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -75,7 +76,10 @@ fun ContactsScreen(
     if(state.isContactDialogOpen){
         AddContactDialog(
             onDismissRequest = { viewModel.onEvent(ContactEvent.AddContactDialogDismissed) },
-            dataProvider = viewModel)
+            dataProvider = viewModel,
+            modifier = Modifier
+                .testTag("contactDialog")
+        )
     }
 
     if(state.isShareDialogOpen){
@@ -106,7 +110,8 @@ fun ContactsScreen(
                                 anchor = parent.top,
                                 margin = largeMargin
                             )
-                        },
+                        }
+                        .testTag("contactDialogButton"),
                     onClick = { viewModel.onEvent(ContactEvent.AddContactDialogOpened) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if(isPressed){

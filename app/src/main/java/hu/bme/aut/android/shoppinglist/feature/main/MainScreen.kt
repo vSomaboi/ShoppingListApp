@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,7 +53,7 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     notificationsButtonClicked: () -> Unit = {},
     contactsButtonClicked: () -> Unit = {},
-    createButtonClicked: () -> Unit = {}
+    createButtonClicked: () -> Unit = { viewModel.onEvent(MainEvent.AddProductDialogOpened)}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -79,20 +80,25 @@ fun MainScreen(
     if(state.isProductDialogOpen){
         AddProductDialog(
             onDismissRequest = { viewModel.onEvent(MainEvent.AddProductDialogDismissed) },
-            dataProvider = viewModel
+            dataProvider = viewModel,
+            modifier = Modifier
+                .testTag("addProductDialog")
         )
     }
 
     if(state.isModifyDialogOpen){
         ModifyListDialog(
             onDismissRequest = { viewModel.onEvent(MainEvent.ModifyDialogDismissed) },
-            dataProvider = viewModel)
+            dataProvider = viewModel
+        )
     }
 
     if(state.isSelectionDialogOpened){
         ProductSelectionDialog(
             onDismissRequest = { viewModel.onEvent(MainEvent.SelectionDialogDismissed) },
-            dataProvider = viewModel)
+            dataProvider = viewModel,
+            modifier = Modifier
+        )
     }
 
     Scaffold(
@@ -117,7 +123,9 @@ fun MainScreen(
                         )
                     }
                     IconButton(
-                        onClick = { viewModel.onEvent(MainEvent.AddProductDialogOpened) }
+                        onClick = { viewModel.onEvent(MainEvent.AddProductDialogOpened) },
+                        modifier = Modifier
+                            .testTag("addProductDialogIcon")
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_add),

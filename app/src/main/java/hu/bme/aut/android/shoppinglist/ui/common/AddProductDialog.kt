@@ -16,6 +16,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -30,11 +31,12 @@ import hu.bme.aut.android.shoppinglist.util.IAddProductDialogUser
 @Composable
 fun AddProductDialog(
     onDismissRequest: () -> Unit,
-    dataProvider : IAddProductDialogUser
+    dataProvider : IAddProductDialogUser,
+    modifier: Modifier
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.7f)
                 .padding(dimensionResource(id = R.dimen.padding_m)),

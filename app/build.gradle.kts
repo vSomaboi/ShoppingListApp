@@ -81,6 +81,10 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    //Hilt for testing
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.android.compiler)
+
     //Shapes
     implementation (libs.androidx.graphics.shapes)
 
@@ -95,8 +99,12 @@ dependencies {
 
     //Charts
 
-    //Tests with Mockito
+    //Unit Tests with Mockito
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.mockito.kotlin)
+
+    //Instrumental tests
+    androidTestImplementation (libs.androidx.runner)
+    androidTestImplementation (libs.androidx.rules)
 }

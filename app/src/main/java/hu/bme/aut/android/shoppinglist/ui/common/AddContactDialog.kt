@@ -27,11 +27,12 @@ import hu.bme.aut.android.shoppinglist.util.IAddContactDialogUser
 @Composable
 fun AddContactDialog(
     onDismissRequest: () -> Unit,
-    dataProvider: IAddContactDialogUser
+    dataProvider: IAddContactDialogUser,
+    modifier: Modifier
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(dimensionResource(id = R.dimen.padding_m)),
